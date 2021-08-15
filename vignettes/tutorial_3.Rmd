@@ -1,0 +1,1004 @@
+---
+title: "CSCPlots Tutorial 3"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CSCPlots Tutorial 3}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+### __Tutorial 3: Identifying and Characterising Cancer Stem Cells In NSCLC Single-Cell RNA-Seq__
+
+Tutorial 3 uses an NSCLC scRNA-Seq dataset published by Lambrechts *et al.* (Nature Medicine 2018). The original
+dataset contains 52,698 cells, but we'll use 45,000 of these cells (randomly sampled cells) to make some of the
+computational methods used more tractable. Please contact that original authors to obtain the full 52,698 cells.
+
+A pipeline will be constructed using functions from the CSCPlots package to perform the following steps.
+
+- Generate a t-SNE using read counts for the NSCLC cells.
+- Predict stemness and other cell types in each of the cells, using iPSC RNA-Seq and melanoma scRNA-Seq.
+- Identify genes associated with higher stemness and higher transcription, in NSCLC cells.
+- Use the t-SNE to select putative cancer stem cells (pCSCs), by using the stemness predictions and other information
+  such as transcription gradients and predicted cell types.
+- Detect preferential expression in the selected pCSCs using a Cells Per Million matrix, to find genes driving these cells.
+
+### Step 1: t-SNE Generation ###########################################################################################
+
+Create the results directories, and load the NSCLC expression data included with this package:
+
+```{r message=FALSE}
+library("Matrix")
+library("biomaRt")
+library("gtools")
+library("Rtsne")
+library("caret")
+library("ranger")
+library("e1071")
+library("randomForest")
+library("ggplot2")
+library("ggrepel"); options(ggrepel.max.overlaps = Inf)
+library("cscplots")
+
+project_name   <- "NSCLC_45000" 
+wd             <- './' # set the working directory
+saveDir        <- paste0(wd, 'save/')
+resultsBaseDir <- paste0('results/')
+resultsDir     <- paste0('results/', project_name, '/')
+tSNEsDir       <- paste0(resultsDir, 'tSNEs/')
+pCSCsDir       <- paste0(tSNEsDir, "pCSC_group_selection/")
+prefExprDir    <- paste0(resultsDir, "preferential_expression/")
+dataDir        <- paste0(wd, '../data/')
+dir.create(saveDir, showWarnings = FALSE)
+dir.create(resultsBaseDir, showWarnings = FALSE)
+dir.create(resultsDir, showWarnings = FALSE)
+dir.create(tSNEsDir, showWarnings = FALSE)
+dir.create(pCSCsDir, showWarnings = FALSE)
+dir.create(prefExprDir, showWarnings = FALSE)
+dir.create(dataDir, showWarnings = FALSE)
+
+# Combine the NSCLC data that's available with this package.
+
+tCounts_NSCLC_45000 <- rbind(tCounts_NSCLC_1_15000, tCounts_NSCLC_15001_30000, tCounts_NSCLC_30001_45000)
+tCounts_NSCLC_1_15000     <- NULL
+tCounts_NSCLC_15001_30000 <- NULL
+tCounts_NSCLC_30001_45000 <- NULL
+
+tTPM_mela_4558 <- rbind(tTPM_mela_1_2500, tTPM_mela_2501_4558)
+tTPM_mela_1_2500 <- NULL
+tTPM_mela_2501_4558 <- NULL
+```
+
+We're going to work with the raw read counts initially, but if you prefer, you can use TPMs. You can
+generate TPMs by uncommenting this:
+
+```{r}
+#gene_lengths_NSCLC_45000[1:10] # Gene lengths for the NSCLC data are automatically available in this package
+#transcript_lengths_NSCLC_45000[1:10] # Transcript lengths are also in this package
+
+# Or to get the gene or transcript lengths from biomart:
+#gene_names <- colnames(tCounts_NSCLC_45000)
+#gene_lengths_NSCLC_45000       <- get_gene_lengths_using_gene_names(gene_names)
+#transcript_lengths_NSCLC_45000 <- get_transcript_lengths_using_gene_names(gene_names)
+
+#no_transcript_lengths_pos <- as.numeric(which(is.na(transcript_lengths_NSCLC_45000)))
+#transcript_lengths_NSCLC_45000_no_lengths_removed <- transcript_lengths_NSCLC_45000[-(no_transcript_lengths_pos)]
+#lengths_to_use <- transcript_lengths_NSCLC_45000_no_lengths_removed
+#counts_to_use <- tCounts_NSCLC_45000[,-c(no_transcript_lengths_pos)]
+
+#tTPM_NSCLC_45000      <- tpm_samplewise(counts_to_use, lengths_to_use)
+#save(tTPM_NSCLC_45000, file = paste0(saveDir, "tTPM_NSCLC_45000.RData"))
+##load(paste0(saveDir, "tTPM_NSCLC_45000.RData"))
+#tTPM_NSCLC_45000 <- NULL # because we'll not use it here
+```
+
+When generating a t-SNE using the NSCLC scRNA-Seq expression matrix, the recommended perplexity parameter value
+to use is 70. However, you can use a list of perplexity values to generate multiple t-SNEs if you prefer.
+
+Here we'll use the raw counts for the input, but you could use TPMs (which can be generated as shown above).
+
+```{r}
+perplexityValues      <<- c(70)
+perplexityValuesPrint <- add_zeros_to_perplexity_values(perplexityValues)
+tSNE_run_names        <- paste0("tSNE_", perplexityValuesPrint)
+
+outDir <- tSNEsDir
+```
+
+However, generating the t-SNE for the 45,000 NSCLC cells is computationally intensive. You can use a shortcut and use the
+following t-SNE info which is available in this package:
+
+```{r}
+str(NSCLC_45000_counts_tSNE_results)
+```
+
+To generate the t-SNE yourself:
+
+```{r}
+set.seed(1) # for reproduction of results; comment for unfixed results
+
+#NSCLC_45000_counts_tSNE_results <- run_all_tSNEs(perplexityValues, tCounts_NSCLC_45000, project_name, outDir, montage <- 0) 
+#save(NSCLC_45000_counts_tSNE_results, file = paste0(saveDir, "NSCLC_45000_counts_tSNE_results.RData"))
+#load(paste0(saveDir, "NSCLC_45000_counts_tSNE_results.RData"))
+```
+
+Now add the t-SNE results to a list. This data structure is used so that it's possible to add further cohort's t-SNE results
+later for concurrent analysis - as demonstrated in tutorial 1.
+
+```{r}
+NSCLC_tSNE_list <- list()
+NSCLC_tSNE_list[[1]] <- NSCLC_45000_counts_tSNE_results
+names(NSCLC_tSNE_list)[1] <- project_name
+```
+
+----------
+
+### Step 2: Cell Stemness and Other Cell Type Predictions #######################################################################################
+
+In the same way as shown in tutorials 1 and 2, each cell in the NSCLC population will be given a stemness score (relative to fibroblasts
+and mononuclear cells). This uses random forests trained on stem cell (iPSC) RNA-Seq expression data from HipSci. Below three random
+forest implementations are used, which you can use compare and contrast the stemness gradients, particularly when overlaid on the t-SNEs, but
+you could use just one or two.
+
+```{r message=FALSE}
+number_of_genes_to_use <- 16000
+
+# Put the NSCLC expression matrix in a list first:
+NSCLC_tCounts_list <- list()
+NSCLC_tCounts_list[[1]] <- tCounts_NSCLC_45000
+names(NSCLC_tCounts_list)[1] <- "NSCLC_45000_counts"
+
+NSCLC_stemness_prediction_DFs_lists <- list()
+NSCLC_stemness_prediction_DFs_lists[[1]] <- run_ML_stemness_predictors(model_type <- 'ranger',       NSCLC_tCounts_list, hipsci_training_data,
+                                                                       stemness_type <- 'hipsci', number_of_genes_to_use, sample_data_type <- 'counts', resultsDir)
+names(NSCLC_stemness_prediction_DFs_lists)[1] <- "ranger_hipsci_TPM"
+NSCLC_stemness_prediction_DFs_lists[[2]] <- run_ML_stemness_predictors(model_type <- 'rf',           NSCLC_tCounts_list, hipsci_training_data,
+                                                                       stemness_type <- 'hipsci', number_of_genes_to_use, sample_data_type <- 'counts', resultsDir)
+names(NSCLC_stemness_prediction_DFs_lists)[2] <- "rf_hipsci_TPM"
+NSCLC_stemness_prediction_DFs_lists[[3]] <- run_ML_stemness_predictors(model_type <- 'randomForest', NSCLC_tCounts_list, hipsci_training_data,
+                                                                       stemness_type <- 'hipsci', number_of_genes_to_use, sample_data_type <- 'counts', resultsDir)
+names(NSCLC_stemness_prediction_DFs_lists)[3] <- "randomForest_hipsci_TPM"
+
+save(NSCLC_stemness_prediction_DFs_lists, file = paste0(saveDir, "NSCLC_stemness_prediction_DFs_lists.RData"))
+#load(paste0(saveDir, "NSCLC_stemness_prediction_DFs_lists.RData"))
+```
+
+Additional information available in this package for the NSCLC cells are:
+- cell type annotations provided by the NSCLC dataset publishers;
+- each cell's patient source (sample number);
+- each cell's tumour location ("patient piece");
+- PluriTest predicted stemness scores;
+- ESTIMATE generated scores for stromal and immune cells.
+
+```{r}
+NSCLC_45000_additional_info[1:5,]
+```
+
+However, if you have scRNA-Seq without cell type annotations, we can predict cell types using another expression matrix
+if it has cell types annotations available (this is very similar to what we just did with the HipSci data). You can use
+the CSCPlots function run_ML_cellType_predictors() to do this. For illustration purposes, we could use the melanoma
+scRNA-Seq from Tirosh *et al.* that was used in tutorial 2, to predict cell types in the NSCLC cells. If you were
+working with a dataset other than NSCLC, you could use the NSCLC expression matrix combined with the NSCLC cell types
+to predict cell types also.
+
+These predictions will take a while (~a few hours) though, and you can skip these predictions if you are not interested.
+They may however, help you to understand the cell population further. Additionally, you could use several random forest
+implementations as used above for stemness predictions, to allow comparison of their results to reinforce
+confidence in the predictions.
+
+```{r message=FALSE}
+number_of_genes_to_use <- 16000
+#number_of_genes_to_use <- 10000 # makes the computations slightly quicker, but 16000 is prefered
+
+# Additional info available for the melanoma cells:
+mela_4558_additional_info[1:5,]
+
+# Combine the melanoma cell type annotations with the melanoma expression matrix for use in predictions
+mela_4558_cell_types <- mela_4558_additional_info$Cell_type
+tTPM_mela_4558_with_cell_types <- cbind.data.frame(mela_4558_cell_types, tTPM_mela_4558)
+colnames(tTPM_mela_4558_with_cell_types) <- c("Cell_type", colnames(tTPM_mela_4558))
+
+# Cell type predictions using melanoma data
+NSCLC_cell_type_prediction_DFs_lists <- list()
+NSCLC_cell_type_prediction_DFs_lists[[1]] <- run_ML_cellType_predictors(model_type <- 'ranger', NSCLC_tCounts_list, cellTypeData <- tTPM_mela_4558_with_cell_types,
+                                                                        expressionData_type <- 'mela_cell_types', number_of_genes_to_use, sample_data_type <- 'counts', resultsDir)
+names(NSCLC_cell_type_prediction_DFs_lists)[1] <- "ranger_mela_cell_types"
+save(NSCLC_cell_type_prediction_DFs_lists, file = paste0(saveDir, "NSCLC_cell_type_prediction_DFs_lists.RData"))
+#load(paste0(saveDir, "NSCLC_cell_type_prediction_DFs_lists.RData"))
+
+# By the way, you could use this dataframe to predict cell types in other cohorts using the NSCLC data:
+#tCounts_NSCLC_45000_with_cell_types <- cbind.data.frame(NSCLC_45000_additional_info$Cell_type, tCounts_NSCLC_45000)
+#colnames(tCounts_NSCLC_45000_with_cell_types) <- c("Cell_type", colnames(tCounts_NSCLC_45000))
+```
+
+We can also use other cell annotations in the melanoma dataset to predict similar features in the NSCLC cells.
+For example, we could try that with "cell malignancy" annotations of the melanoma cells to predict the probabilities 
+of NSCLC cells being maligant. Again, skip this if you want to.
+
+```{r message=FALSE}
+# Combine the melanoma cell malignany annotations with the melanoma expression matrix for use in predictions
+mela_4558_cell_malignancy <- mela_4558_additional_info$Cell_malignancy
+tTPM_mela_4558_with_cell_malignancy <- cbind.data.frame(mela_4558_cell_malignancy, tTPM_mela_4558)
+colnames(tTPM_mela_4558_with_cell_malignancy) <- c("Cell_type", colnames(tTPM_mela_4558))
+
+# Cell malignancy predictions using melanoma data:
+NSCLC_cell_malignancy_prediction_DFs_lists <- list()
+NSCLC_cell_malignancy_prediction_DFs_lists[[1]] <- run_ML_cellType_predictors(model_type <- 'ranger', NSCLC_tCounts_list, cellTypeData <- tTPM_mela_4558_with_cell_malignancy,
+                                                                              expressionData_type <- 'mela_cell_malignancy', number_of_genes_to_use, sample_data_type <- 'counts', resultsDir)
+names(NSCLC_cell_malignancy_prediction_DFs_lists)[1] <- "ranger_mela_cell_malignancy"
+save(NSCLC_cell_malignancy_prediction_DFs_lists, file = paste0(saveDir, "NSCLC_cell_malignancy_prediction_DFs_lists.RData"))
+#load(paste0(saveDir, "NSCLC_cell_malignancy_prediction_DFs_lists.RData"))
+```
+
+----------
+
+### Step 3: Total Transcription & Total Transcribed Genes
+
+Calculate total transcription (all expression in all transcripts) for each cell, and total transcribed
+genes (sum of all expression in all transcripts) for each cell; will be used later, e.g. to help evaluate
+the t-SNEs:
+
+```{r}
+NSCLC_total_transcription_levels_list <- list()
+NSCLC_total_transcribed_genes_list    <- list()
+cohort_index <- 1 # only 1 cohort being used in this project i.e. all 45000 NSCLC population cells from multiple patients
+df <- tCounts_NSCLC_45000
+#df <- tTPM_NSCLC_45000 # If you're using TPMs
+total_transcription_levels <- rowSums(df)
+total_transcribed_genes_vec <- vector()
+for(i in 1:nrow(df)){
+    thisCount <- sum(df[i,] >= 1)
+    if(is.na(thisCount)){ cat("Is na\n") }; if(thisCount <= 0){ cat("0 or less\n") }
+    total_transcribed_genes_vec[[i]] <- thisCount
+}
+names(total_transcribed_genes_vec) <- rownames(df)
+print(cor.test(as.numeric(total_transcribed_genes_vec), as.numeric(total_transcription_levels), method="pearson"))
+NSCLC_total_transcription_levels_list[[cohort_index]] <- total_transcription_levels
+NSCLC_total_transcribed_genes_list[[cohort_index]] <- total_transcribed_genes_vec
+names(NSCLC_total_transcription_levels_list)[cohort_index] <- project_name
+names(NSCLC_total_transcribed_genes_list)[cohort_index] <- project_name
+df <- NULL
+```
+
+----------
+
+### Step 4: t-SNE Analysis #############################################################################################
+
+Similarly to in tutorials 1 & 2, we'll use the stemness scores generated in step 2 to identify regions of higher predicted
+stemness in the t-SNEs. This will be compared against other information displayed in the t-SNEs, to select pCSCs.
+Identification of cells that have high transcription, high predicted stemness, and that are consistent with the
+t-SNE topology (e.g. cell clusters) are the aim. But depending on the tumour population that you are analysing, and
+the additional information available, you may adapt the features that you are using to identify cancer stem cells.
+
+As always, it's recommended to view plots in this tutorial using the high resolution tif files that are generated, which
+will help you to work more precisely with the cells.
+
+#### __4a)__: Annotate the t-SNEs
+
+Add the cell scores previously generated to a t-SNE list for subsequent plotting and analysis:
+
+```{r}
+NSCLC_tSNE_list_with_annotations <- list()
+
+cohort_index <- 1 # only 1 cohort used in this project
+tSNE_results_with_annotations_tmp <- NSCLC_tSNE_list[[cohort_index]]
+
+tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
+                                                                scores <- as.numeric(NSCLC_total_transcription_levels_list[[cohort_index]]),
+                                                                scoresName <- "Total_transcription")
+tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
+                                                                as.numeric(NSCLC_total_transcribed_genes_list[[cohort_index]]),
+                                                                "Total_transcribed_genes")
+
+stemness_score_indices_to_use <- c(2,2,2) # use 2 for HipSci IPS predictions (1 for fibro & 3 for mononuclear)
+for(i in 1:length(NSCLC_stemness_prediction_DFs_lists)){
+    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
+                                                                    NSCLC_stemness_prediction_DFs_lists[[i]][[cohort_index]][,stemness_score_indices_to_use[i]],
+                                                                    paste0(names(NSCLC_stemness_prediction_DFs_lists[i]), "_",
+                                                                    names(NSCLC_stemness_prediction_DFs_lists[[i]][[cohort_index]])[stemness_score_indices_to_use[i]]))
+}
+
+for(i in 1:length(NSCLC_cell_type_prediction_DFs_lists)){    
+    for(j in 1:ncol(NSCLC_cell_type_prediction_DFs_lists[[i]][[cohort_index]])){ # do for all cell types
+        tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
+                                                                        NSCLC_cell_type_prediction_DFs_lists[[i]][[cohort_index]][,j],
+                                                                        paste0(names(NSCLC_cell_type_prediction_DFs_lists[i]), "_",
+                                                                        names(NSCLC_cell_type_prediction_DFs_lists[[i]][[cohort_index]])[j])
+                                                                        )
+    }
+}
+
+cell_malignancy_score_index_to_use <- 3 # use 3 for "Yes" malignancy predictions (1 for "Unresolved" & 2 for "No")
+for(i in 1:length(NSCLC_cell_malignancy_prediction_DFs_lists)){
+    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
+                                                                    NSCLC_cell_malignancy_prediction_DFs_lists[[i]][[cohort_index]][,cell_malignancy_score_index_to_use[i]],
+                                                                    paste0(names(NSCLC_cell_malignancy_prediction_DFs_lists[i]), "_",
+                                                                    names(NSCLC_cell_malignancy_prediction_DFs_lists[[i]][[cohort_index]])[cell_malignancy_score_index_to_use[i]]))
+}
+
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- tSNE_results_with_annotations_tmp
+names(NSCLC_tSNE_list_with_annotations)[cohort_index] <- names(NSCLC_tSNE_list)[cohort_index]
+tSNE_results_with_annotations_tmp <- NULL
+#save(NSCLC_tSNE_list_with_annotations, file = paste0(saveDir, "NSCLC_tSNE_list_with_annotations.RData"))
+```
+
+#### __4b)__: Plot t-SNE Cell Scores and Transcription Gradients
+
+Plot the t-SNEs with stemness scores, transcription levels, and also predicted cell type scores and predicted cell
+malignancy scores if you generated them:
+
+```{r}
+cohort_index <- 1
+outDir <- tSNEsDir
+
+for(i in 1:length(perplexityValues)){    
+    for(j in 3:length(names(NSCLC_tSNE_list_with_annotations[[cohort_index]][[i]]))){ # 1:2 are the Y1 & Y2 values so skip them
+        plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[i]], "Y1", "Y2", runName <- tSNE_run_names[i], scoresName <- names(NSCLC_tSNE_list_with_annotations[[cohort_index]][[i]])[j],
+                    datasetName <- names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, labelPositions <- NULL, colourPositions <- NULL, highestOnTop <- TRUE)
+    }
+}
+```
+
+#### __4c)__: Cell Types and Additional Info t-SNE Plots
+
+Additional cell annotations will now be added to the annotated t-SNE list, for subsequent display on the t-SNE i.e. 
+sample numbers, tumour location info and cell types from the NSCLC publishers, and also ESTIMATE immune/stromal
+and PluriTest stemness prediction scores:
+
+```{r}
+cohort_index <- 1 # only 1 cohort used in this project
+
+# Sample numbers
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- add_scores_to_tSNE_results(NSCLC_tSNE_list_with_annotations[[cohort_index]], perplexityValues,
+                                                                               as.factor(NSCLC_45000_additional_info$Samples), "Samples")
+# Tumour location
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- add_scores_to_tSNE_results(NSCLC_tSNE_list_with_annotations[[cohort_index]], perplexityValues,
+                                                                               NSCLC_45000_additional_info$Patient_piece, "Patient_piece")
+# Cell types, and immune and stromal scores
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- add_scores_to_tSNE_results(NSCLC_tSNE_list_with_annotations[[cohort_index]], perplexityValues,
+                                                                               NSCLC_45000_additional_info$Cell_type,                "Cell_type")
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- add_scores_to_tSNE_results(NSCLC_tSNE_list_with_annotations[[cohort_index]], perplexityValues,
+                                                                               NSCLC_45000_additional_info$ESTIMATE_stromal_scores,  "ESTIMATE_stromal_scores")
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- add_scores_to_tSNE_results(NSCLC_tSNE_list_with_annotations[[cohort_index]], perplexityValues,
+                                                                               NSCLC_45000_additional_info$ESTIMATE_immune_scores,   "ESTIMATE_immune_scores")
+# PluriTest scores
+NSCLC_tSNE_list_with_annotations[[cohort_index]] <- add_scores_to_tSNE_results(NSCLC_tSNE_list_with_annotations[[cohort_index]], perplexityValues,
+                                                                               NSCLC_45000_additional_info$Combined_Pluritest_Score, "Combined_PluriTest_Score")
+
+save(NSCLC_tSNE_list_with_annotations, file = paste0(saveDir, "NSCLC_tSNE_list_with_annotations.RData"))
+#load(paste0(saveDir, "NSCLC_tSNE_list_with_annotations.RData"))
+```
+
+Print the t-SNEs with cell scores, etc. just added (tifs are written to results/NSCLC_45000/tSNEs/):
+
+```{r}
+cohort_index <- 1
+perpl_index <- 1 # if only 1 perplexity value was used, i.e. perplexity = 70, set to 1
+outDir <- tSNEsDir
+run_name <- tSNE_run_names[perpl_index]
+
+plot_categories(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Samples",
+                names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir)
+plot_categories(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Patient_piece",
+                names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir)
+
+plot_categories(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Cell_type",
+                names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir)
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "ESTIMATE_stromal_scores",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NULL, highestOnTop <- TRUE)
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "ESTIMATE_immune_scores",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NULL, highestOnTop <- TRUE)
+
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Combined_PluriTest_Score",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NULL, highestOnTop <- TRUE)
+```
+
+#### __4d)__: CDK t-SNEs
+
+Viewing CDK associated expression in the t-SNEs can be helpful in identifying regions of interest in the NSCLC:
+
+```{r}
+CDKsDir <- paste0(tSNEsDir, "CDKs/")
+dir.create(CDKsDir, showWarnings = FALSE)
+
+#CDKs available in this dataset
+colnames(tCounts_NSCLC_45000)[grep("^CDK", colnames(tCounts_NSCLC_45000))]
+
+# For brevity, just a few are shown here, but others are also interesting.
+#gene_names_to_print <- colnames(tCounts_NSCLC_45000)[grep("^CDK", colnames(tCounts_NSCLC_45000))] # To plot all CDKs available
+gene_names_to_print <- c("CDK1", "CDK4", "CDKN2A")
+
+print_tSNE_coloured_by_gene(gene_names_to_print, NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], tCounts_NSCLC_45000, run_name, outDir <- CDKsDir, point_size <- 0.1,
+                            all_HUGO_abbreviations_and_fullnames, dataDir)
+```
+
+#### __4e)__: Selection of Tumour Cell Groups and Clusters
+
+Looking at the t-SNEs that we've generated so far, there are tumour cells that group by sample/patient, on
+the right side of the t-SNE we're using here. These groups of tumour cells each have regions within them of
+high transcription (total transcription and total transcribed genes) and higher predicted stemness. These
+areas also overlap with higher predicted malignancy if you created those scores.
+
+We'll select these groups of tumour cells, and also all of the tumour
+cells for each patient. These groups of tumour cells can be used later for further analysis, e.g. to compare
+against pCSCs selected from within them for preferential expression analysis.
+
+Select the tumour cells for each patient:
+
+```{r}
+NSCLC_45000_tumour_pos <- which(NSCLC_45000_additional_info[,3] == 'Tumour')
+
+patient1_pos <- which(NSCLC_45000_additional_info[,2] == 1)
+patient2_pos <- which(NSCLC_45000_additional_info[,2] == 2)
+patient3_pos <- which(NSCLC_45000_additional_info[,2] == 3)
+patient4_pos <- which(NSCLC_45000_additional_info[,2] == 4)
+patient5_pos <- which(NSCLC_45000_additional_info[,2] == 5)
+
+patient1_tumour_pos <- patient1_pos[which(patient1_pos %in% NSCLC_45000_tumour_pos)]
+patient2_tumour_pos <- patient2_pos[which(patient2_pos %in% NSCLC_45000_tumour_pos)]
+patient3_tumour_pos <- patient3_pos[which(patient3_pos %in% NSCLC_45000_tumour_pos)]
+patient4_tumour_pos <- patient4_pos[which(patient4_pos %in% NSCLC_45000_tumour_pos)]
+patient5_tumour_pos <- patient5_pos[which(patient5_pos %in% NSCLC_45000_tumour_pos)]
+
+NSCLC_patient_tumour_info <- list()
+NSCLC_patient_tumour_info[[1]] <- patient1_tumour_pos
+NSCLC_patient_tumour_info[[2]] <- patient2_tumour_pos
+NSCLC_patient_tumour_info[[3]] <- patient3_tumour_pos
+NSCLC_patient_tumour_info[[4]] <- patient4_tumour_pos
+NSCLC_patient_tumour_info[[5]] <- patient5_tumour_pos
+names(NSCLC_patient_tumour_info) <- c('patient1_tumour_pos', 'patient2_tumour_pos', 'patient3_tumour_pos', 'patient4_tumour_pos', 'patient5_tumour_pos')
+```
+
+Manually select the groups of tumour cells for each patient/sample on the right side of the t-SNE:
+
+```{r}
+cohort_index <- 1
+perpl_index <- 1
+outDir <- tSNEsDir
+run_name <- tSNE_run_names[perpl_index]
+
+# All patient 1 tumour cells:
+plot_scores_with_grid(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+                      names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient1_tumour_pos, highestOnTop <- TRUE)
+# Select only those on the right side of the t-SNE:
+cluster_box_pos_tmp <- select_tSNE_box_positions(tSNE_info = NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], Y1_borders = c(27,40), Y2_borders = c(7,9.1))
+patient1_malignant_cluster_pos <- patient1_tumour_pos[which(patient1_tumour_pos %in% cluster_box_pos_tmp)]
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient1_malignant_cluster_pos, highestOnTop <- TRUE)
+
+# Select patient 2 malignant cells group:
+plot_scores_with_grid(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+                      names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient2_tumour_pos, highestOnTop <- TRUE)
+cluster_box_pos_tmp <- select_tSNE_box_positions(tSNE_info = NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], Y1_borders = c(27.5,31), Y2_borders = c(8,10))
+patient2_malignant_cluster_pos <- patient2_tumour_pos[which(patient2_tumour_pos %in% cluster_box_pos_tmp)]
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient2_malignant_cluster_pos, highestOnTop <- TRUE)
+
+# Patient 3 malignant cells group:
+plot_scores_with_grid(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+                      names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient3_tumour_pos, highestOnTop <- TRUE)
+cluster_box_pos_tmp <- select_tSNE_box_positions(tSNE_info = NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], Y1_borders = c(31,38), Y2_borders = c(3,8))
+patient3_malignant_cluster_pos <- patient3_tumour_pos[which(patient3_tumour_pos %in% cluster_box_pos_tmp)]
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient3_malignant_cluster_pos, highestOnTop <- TRUE)
+
+# Patient 4 malignant cells group:
+plot_scores_with_grid(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+                      names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient4_tumour_pos, highestOnTop <- TRUE)
+cluster_box_pos_tmp <- select_tSNE_box_positions(tSNE_info = NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], Y1_borders = c(32,39), Y2_borders = c(-5,2))
+patient4_malignant_cluster_pos <- patient4_tumour_pos[which(patient4_tumour_pos %in% cluster_box_pos_tmp)]
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient4_malignant_cluster_pos, highestOnTop <- TRUE)
+
+# Patient 5 malignant cells group:
+plot_scores_with_grid(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+                      names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient5_tumour_pos, highestOnTop <- TRUE)
+cluster_box_pos_tmp <- select_tSNE_box_positions(tSNE_info = NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], Y1_borders = c(21,34), Y2_borders = c(-13,6))
+patient5_malignant_cluster_pos <- patient5_tumour_pos[which(patient5_tumour_pos %in% cluster_box_pos_tmp)]
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, patient5_malignant_cluster_pos, highestOnTop <- TRUE)
+
+NSCLC_malignant_clusters_info <- list()
+NSCLC_malignant_clusters_info[[1]] <- patient1_malignant_cluster_pos
+NSCLC_malignant_clusters_info[[2]] <- patient2_malignant_cluster_pos
+NSCLC_malignant_clusters_info[[3]] <- patient3_malignant_cluster_pos
+NSCLC_malignant_clusters_info[[4]] <- patient4_malignant_cluster_pos
+NSCLC_malignant_clusters_info[[5]] <- patient5_malignant_cluster_pos
+names(NSCLC_malignant_clusters_info) <- c('NSCLC_malignant_cluster1', 'NSCLC_malignant_cluster2', 'NSCLC_malignant_cluster3', 'NSCLC_malignant_cluster4', 'NSCLC_malignant_cluster5')
+```
+
+If you didn't have tumour annotations in your scRNA-Seq dataset, you could use cell type predictions instead, such as using the
+melanoma cell types info:
+
+```{r}
+NSCLC_45000_predicted_malignant_pos <- which(NSCLC_cell_malignancy_prediction_DFs_lists[[1]][[1]][,3] > 0.3)
+plot_scores(NSCLC_tSNE_list_with_annotations[[1]][[1]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[1], outDir, NULL, NSCLC_45000_predicted_malignant_pos, highestOnTop <- TRUE)
+```
+
+#### __4f)__: Stemness Correlations
+
+Now that we have some clusters of malignant cells from different patients, let's look at the stemness correlations within each of them, to find
+genes highly correlated with predicted stemness.
+
+```{r}
+cohort_index <- 1
+
+# Transcripts correlated with predicted stemness:
+scores_to_use_list <- list()
+for(i in 1:length(NSCLC_stemness_prediction_DFs_lists)){
+    scores_to_use_list[[i]] <- NSCLC_stemness_prediction_DFs_lists[[i]][[cohort_index]]
+}
+names(scores_to_use_list) <- names(NSCLC_stemness_prediction_DFs_lists)
+```
+
+You can examine different subsets of cells. For example, we can look inside all tumour cells for each patient,
+or within each of the malignant cell groups that were selected:
+
+```{r}
+#NSCLC_clusters_info <- NSCLC_patient_tumour_info # Use this for all tumour cells per patient
+NSCLC_clusters_info <- NSCLC_malignant_clusters_info
+
+NSCLC_stemness_correlations_list <- list()
+
+for(i in 1:length(NSCLC_clusters_info)){
+    cat(paste0("Cluster = ", names(NSCLC_clusters_info)[i], "\n"))
+    tExprMatr_to_use <- tCounts_NSCLC_45000[NSCLC_clusters_info[[i]],]
+    
+    for(k in 1:length(scores_to_use_list)){
+        score_to_use_index <- which(names(scores_to_use_list[[k]]) == 'IPS') # for HipSci IPS predictions (vs fibro & mononuclear)
+        scores_to_use <- scores_to_use_list[[k]][,score_to_use_index][NSCLC_clusters_info[[i]]]
+    
+        NSCLC_stemness_correlations_list[[length(NSCLC_stemness_correlations_list)+1]] <- get_expression_scores_correlations(tExprMatr_to_use, scores_to_use)
+        names(NSCLC_stemness_correlations_list)[length(NSCLC_stemness_correlations_list)] <- paste0(names(NSCLC_clusters_info)[i], "; ", names(scores_to_use_list)[k])
+    
+        cat(paste0(run_name, "; ", names(scores_to_use_list)[k], ":\n"))
+        cat(paste0("\nPositive correlations (top 10):\n"))
+        print(NSCLC_stemness_correlations_list[[length(NSCLC_stemness_correlations_list)]][[1]][1:10])
+        cat(paste0("\nNegative correlations (top 10):\n"))
+        print(NSCLC_stemness_correlations_list[[length(NSCLC_stemness_correlations_list)]][[2]][1:10])
+        cat("\n")    
+    }
+}
+```
+
+We can also look at correlations with other features of the data, e.g. cell malignancy predictions:
+
+```{r}
+# Transcripts correlated with predicted cell malignancy:
+scores_to_use_list <- list()
+for(i in 1:length(NSCLC_cell_malignancy_prediction_DFs_lists)){
+    scores_to_use_list[[i]] <- NSCLC_cell_malignancy_prediction_DFs_lists[[i]][[cohort_index]]
+}
+names(scores_to_use_list) <- names(NSCLC_cell_malignancy_prediction_DFs_lists)
+
+#NSCLC_clusters_info <- NSCLC_patient_tumour_info
+NSCLC_clusters_info <- NSCLC_malignant_clusters_info
+
+NSCLC_predicted_malignancy_correlations_list <- list()
+
+for(i in 1:length(NSCLC_clusters_info)){
+    cat(paste0("Cluster = ", names(NSCLC_clusters_info)[i], "\n"))
+    tExprMatr_to_use <- tCounts_NSCLC_45000[NSCLC_clusters_info[[i]],]
+    
+    for(k in 1:length(scores_to_use_list)){
+        score_to_use_index <- which(names(scores_to_use_list[[k]]) == 'Yes') # for mela TPM cell malignancy predictions
+        scores_to_use <- scores_to_use_list[[k]][,score_to_use_index][NSCLC_clusters_info[[i]]]
+    
+        NSCLC_predicted_malignancy_correlations_list[[length(NSCLC_predicted_malignancy_correlations_list)+1]] <- get_expression_scores_correlations(tExprMatr_to_use, scores_to_use)
+        names(NSCLC_predicted_malignancy_correlations_list)[length(NSCLC_predicted_malignancy_correlations_list)] <- paste0(names(NSCLC_clusters_info)[i], "; ", names(scores_to_use_list)[k])
+    
+        cat(paste0(run_name, "; ", names(scores_to_use_list)[k], ":\n"))
+        cat(paste0("\nPositive correlations (top 10):\n"))
+        print(NSCLC_predicted_malignancy_correlations_list[[length(NSCLC_predicted_malignancy_correlations_list)]][[1]][1:10])
+        cat(paste0("\nNegative correlations (top 10):\n"))
+        print(NSCLC_predicted_malignancy_correlations_list[[length(NSCLC_predicted_malignancy_correlations_list)]][[2]][1:10])
+        cat("\n")    
+    }
+}
+
+```
+
+You could look at the cell type correlations, which include a malignant cell type:
+
+```{r}
+# Transcripts correlated with predicted cell types:
+scores_to_use_list <- list()
+for(i in 1:length(NSCLC_cell_type_prediction_DFs_lists)){
+    scores_to_use_list[[i]] <- NSCLC_cell_type_prediction_DFs_lists[[i]][[cohort_index]]
+}
+names(scores_to_use_list) <- names(NSCLC_cell_type_prediction_DFs_lists)
+
+NSCLC_malignant_cell_correlations_list <- list()
+
+for(i in 1:length(NSCLC_clusters_info)){
+    cat(paste0("Cluster = ", names(NSCLC_clusters_info)[i], "\n"))
+    tExprMatr_to_use <- tCounts_NSCLC_45000[NSCLC_clusters_info[[i]],]
+    
+    for(k in 1:length(scores_to_use_list)){
+        score_to_use_index <- which(names(scores_to_use_list[[k]]) == 'Malignant') # for mela TPM cell type predictions
+        scores_to_use <- scores_to_use_list[[k]][,score_to_use_index][NSCLC_clusters_info[[i]]]
+    
+        NSCLC_malignant_cell_correlations_list[[length(NSCLC_malignant_cell_correlations_list)+1]] <- get_expression_scores_correlations(tExprMatr_to_use, scores_to_use)
+        names(NSCLC_malignant_cell_correlations_list)[length(NSCLC_malignant_cell_correlations_list)] <- paste0(names(NSCLC_clusters_info)[i], "; ", names(scores_to_use_list)[k])
+    
+        cat(paste0(run_name, "; ", names(scores_to_use_list)[k], ":\n"))
+        cat(paste0("\nPositive correlations (top 10):\n"))
+        print(NSCLC_malignant_cell_correlations_list[[length(NSCLC_malignant_cell_correlations_list)]][[1]][1:10])
+        cat(paste0("\nNegative correlations (top 10):\n"))
+        print(NSCLC_malignant_cell_correlations_list[[length(NSCLC_malignant_cell_correlations_list)]][[2]][1:10])
+        cat("\n")    
+    }
+
+}
+```
+
+PluriTest stemness correlations:
+
+```{r}
+#NSCLC_clusters_info <- NSCLC_patient_tumour_info
+NSCLC_clusters_info <- NSCLC_malignant_clusters_info
+
+for(i in 1:length(NSCLC_clusters_info)){
+    cat(paste0("Cluster = ", names(NSCLC_clusters_info)[i], "\n"))
+    tExprMatr_to_use <- tCounts_NSCLC_45000[NSCLC_clusters_info[[i]],]
+    scores_to_use <- NSCLC_45000_additional_info$Combined_Pluritest_Score[NSCLC_clusters_info[[i]]]
+
+    NSCLC_stemness_correlations_list[[length(NSCLC_stemness_correlations_list)+1]] <- get_expression_scores_correlations(tExprMatr_to_use, scores_to_use)
+    names(NSCLC_stemness_correlations_list)[length(NSCLC_stemness_correlations_list)] <- paste0(names(NSCLC_clusters_info)[i], "; Combined_Pluritest_Score")
+
+    cat(paste0("Combined_Pluritest_Score:\n"))
+    cat(paste0("\nPositive correlations (top 10):\n"))
+    print(NSCLC_stemness_correlations_list[[length(NSCLC_stemness_correlations_list)]][[1]][1:10])
+    cat(paste0("\nNegative correlations (top 10):\n"))
+    print(NSCLC_stemness_correlations_list[[length(NSCLC_stemness_correlations_list)]][[2]][1:10])
+    cat("\n")    
+}
+```
+
+#### __4g)__: Manual pCSC Group Selections
+
+From the correlations that we just calculated, here are some selected stemness markers. 
+You could use many of the other highly correlated genes instead though, or even some of those used for
+melanoma in tutorial 2:
+
+```{r}
+#gene_names_to_print <- c('OAZ1', 'DSTN', 'FAU') # from NSCLC malignant clusters
+gene_names_to_print <- c('NACA', 'MYL6', 'MIF', 'FAU', 'JTB', 'SPINT2') # from NSCLC tumour cells by patient
+#gene_names_to_print <- c('SMC4', 'POLA1', 'CDK1', 'MCM6', 'NUSAP1', 'MCM7', 'FANCI', 'NCAPG', 'TYMS') # stemness markers from melanoma
+
+markersDir <- paste0(tSNEsDir, "high_stemness_markers/")
+dir.create(markersDir, showWarnings = FALSE)
+outDir <- markersDir
+
+print_tSNE_coloured_by_gene(gene_names_to_print, NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], tCounts_NSCLC_45000, run_name, outDir, point_size <- 0.1,
+                            all_HUGO_abbreviations_and_fullnames, dataDir)
+```
+
+Comparing the high resolution tif files showing t-SNEs generated above i.e. using stemness scores, transcription
+levels, CDKs, stemness markers, and also considering the t-SNE topology, I selected these groups of malignant cells
+as putative cancer stem cell groups:
+
+```{r}
+NSCLC_pCSC_groups
+
+cohort_index <- 1
+perpl_index <- 1
+outDir <- tSNEsDir
+run_name <- tSNE_run_names[perpl_index]
+
+# pCSC group 1
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NSCLC_pCSC_groups[[1]], highestOnTop <- TRUE)
+# pCSC group 2
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NSCLC_pCSC_groups[[2]], highestOnTop <- TRUE)
+# pCSC group 3
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NSCLC_pCSC_groups[[3]], highestOnTop <- TRUE)
+# pCSC group 4
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NSCLC_pCSC_groups[[4]], highestOnTop <- TRUE)
+# pCSC group 5
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NSCLC_pCSC_groups[[5]], highestOnTop <- TRUE)
+
+# pCSC groups 1-5
+all_NSCLC_pCSC_groups <- c(NSCLC_pCSC_groups[[1]], NSCLC_pCSC_groups[[2]], NSCLC_pCSC_groups[[3]], NSCLC_pCSC_groups[[4]], NSCLC_pCSC_groups[[5]])
+plot_scores(NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
+            names(NSCLC_tSNE_list_with_annotations)[cohort_index], outDir, NULL, all_NSCLC_pCSC_groups, highestOnTop <- TRUE)
+```
+
+----------
+
+### Step 5: Preferential Expression Plots ############################################
+
+We have selected a pCSC group from tumour cells for each of the five patients.
+
+We can now look at the preferential expression in these pCSC groups, relative to other cells in the cell population.
+
+Because the NSCLC data is available as read counts, it can be converted to Cells Per
+Million values, which will help to detect preferential expression. This can use transcript lengths or gene lengths in the CellsPM
+calculations. We'll use gene lengths here:
+
+```{r}
+gene_lengths_NSCLC_45000[1:10] # Data automatically available in this package
+
+# To get the gene lengths from biomart:
+#gene_names <- colnames(tCounts_NSCLC_45000)
+#gene_lengths_NSCLC_45000       <- get_gene_lengths_using_gene_names(gene_names)
+
+no_gene_lengths_pos <- as.numeric(which(is.na(gene_lengths_NSCLC_45000)))
+gene_lengths_NSCLC_45000_no_lengths_removed <- gene_lengths_NSCLC_45000[-(no_gene_lengths_pos)]
+lengths_to_use_1 <- gene_lengths_NSCLC_45000_no_lengths_removed
+counts_to_use_1 <- tCounts_NSCLC_45000[,-c(no_gene_lengths_pos)]
+
+tCellsPM_NSCLC_45000  <- count_fractions_per_base_transcriptwise(counts_to_use_1, lengths_to_use_1)
+save(tCellsPM_NSCLC_45000, file = paste0(saveDir, "tCellsPM_NSCLC_45000-gene_lengths.RData"))
+#load(paste0(saveDir, "tCellsPM_NSCLC_45000-gene_lengths.RData"))
+```
+
+If you'd like to use transcript lengths to generate the CellsPM matrix, you can uncomment and use
+this instead:
+
+```{r}
+## Data automatically available in this package:
+#transcript_lengths_NSCLC_45000[1:10]
+
+## To get the transcript lengths from biomart:
+#gene_names <- colnames(tCounts_NSCLC_45000)
+#transcript_lengths_NSCLC_45000 <- get_transcript_lengths_using_gene_names(gene_names)
+
+#no_transcript_lengths_pos <- as.numeric(which(is.na(transcript_lengths_NSCLC_45000)))
+#transcript_lengths_NSCLC_45000_no_lengths_removed <- transcript_lengths_NSCLC_45000[-(no_transcript_lengths_pos)]
+#lengths_to_use_2 <- transcript_lengths_NSCLC_45000_no_lengths_removed
+#counts_to_use_2 <- tCounts_NSCLC_45000[,-c(no_transcript_lengths_pos)]
+
+#tCellsPM_NSCLC_45000  <- count_fractions_per_base_transcriptwise(counts_to_use_2, lengths_to_use_2)
+#save(tCellsPM_NSCLC_45000, file = paste0(saveDir, "tCellsPM_NSCLC_45000-transcript_lengths.RData"))
+#load(paste0(saveDir, "tCellsPM_NSCLC_45000-transcript_lengths.RData"))
+```
+
+HUGO gene groups need to be mapped to the scRNA-Seq expression matrix genes (columns in the matrix) first:
+
+```{r}
+#head(all_HUGO_groups_mordered)
+NSCLC_transcript_names <- colnames(tCellsPM_NSCLC_45000) # if you're using CellsPM
+#NSCLC_transcript_names <- colnames(tTPM_NSCLC_45000)    # if you're using TPMs
+#NSCLC_transcript_names <- colnames(tCounts_NSCLC_45000) # if you're using read counts for the pref expr plots
+
+# Create a list of HUGO gene groups, with each group containing the position of each group member in the gene expression matrix columns.
+NSCLC_all_HUGO_groups_positions <- map_gene_positions_to_HUGO_gene_groups(NSCLC_transcript_names, all_HUGO_groups_mordered)
+save(NSCLC_all_HUGO_groups_positions, file = paste0(saveDir, "NSCLC_all_HUGO_gene_group_positions-CellsPM.RData"))
+#load(paste0(saveDir, "NSCLC_all_HUGO_gene_group_positions-CellsPM.RData"))
+
+# Subset to only use HUGO gene groups that have two or more members in the gene expression matrix
+NSCLC_all_HUGO_groups_positions_two_or_more <- NSCLC_all_HUGO_groups_positions[which(lengths(NSCLC_all_HUGO_groups_positions) >= 2)]
+gene_group_positions_to_use <- NSCLC_all_HUGO_groups_positions_two_or_more
+```
+
+Setting the parameters for the preferential expression plots, we'll use here tumour cells from each patient to compare against
+the pCSCs:
+
+```{r}
+NSCLC_pCSC_groups_to_run <- list()
+
+NSCLC_pCSC_groups_info_list_tmp <- list()
+NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_1_patient_1_tumour'
+NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[1]]
+NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 1'
+NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_patient_tumour_info[[1]]
+names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+NSCLC_pCSC_groups_to_run[[1]] <- NSCLC_pCSC_groups_info_list_tmp
+
+NSCLC_pCSC_groups_info_list_tmp <- list()
+NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_2_patient_2_tumour'
+NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[2]]
+NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 2'
+NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_patient_tumour_info[[2]]
+names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+NSCLC_pCSC_groups_to_run[[2]] <- NSCLC_pCSC_groups_info_list_tmp
+
+NSCLC_pCSC_groups_info_list_tmp <- list()
+NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_3_patient_3_tumour'
+NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[3]]
+NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 3'
+NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_patient_tumour_info[[3]]
+names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+NSCLC_pCSC_groups_to_run[[3]] <- NSCLC_pCSC_groups_info_list_tmp
+
+NSCLC_pCSC_groups_info_list_tmp <- list()
+NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_4_patient_4_tumour'
+NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[4]]
+NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 4'
+NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_patient_tumour_info[[4]]
+names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+NSCLC_pCSC_groups_to_run[[4]] <- NSCLC_pCSC_groups_info_list_tmp
+
+NSCLC_pCSC_groups_info_list_tmp <- list()
+NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_5_patient_5_tumour'
+NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[5]]
+NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 5'
+NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_patient_tumour_info[[5]]
+names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+NSCLC_pCSC_groups_to_run[[5]] <- NSCLC_pCSC_groups_info_list_tmp
+```
+
+If you'd also like to compare against the malignant cell clusters we selected previously, you can uncomment the following:
+
+```{r}
+#NSCLC_pCSC_groups_info_list_tmp <- list()
+#NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_1_patient_1_malignant_cluster'
+#NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[1]]
+#NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 1'
+#NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_malignant_clusters_info[[1]]
+#names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+#NSCLC_pCSC_groups_to_run[[6]] <- NSCLC_pCSC_groups_info_list_tmp
+
+#NSCLC_pCSC_groups_info_list_tmp <- list()
+#NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_2_patient_2_malignant_cluster'
+#NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[2]]
+#NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 2'
+#NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_malignant_clusters_info[[2]]
+#names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+#NSCLC_pCSC_groups_to_run[[7]] <- NSCLC_pCSC_groups_info_list_tmp
+
+#NSCLC_pCSC_groups_info_list_tmp <- list()
+#NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_3_patient_3_malignant_cluster'
+#NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[3]]
+#NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 3'
+#NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_malignant_clusters_info[[3]]
+#names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+#NSCLC_pCSC_groups_to_run[[8]] <- NSCLC_pCSC_groups_info_list_tmp
+
+#NSCLC_pCSC_groups_info_list_tmp <- list()
+#NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_4_patient_4_malignant_cluster'
+#NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[4]]
+#NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 4'
+#NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_malignant_clusters_info[[4]]
+#names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+#NSCLC_pCSC_groups_to_run[[9]] <- NSCLC_pCSC_groups_info_list_tmp
+
+#NSCLC_pCSC_groups_info_list_tmp <- list()
+#NSCLC_pCSC_groups_info_list_tmp[[1]] <- 'NSCLC_pCSC_group_5_patient_5_malignant_cluster'
+#NSCLC_pCSC_groups_info_list_tmp[[2]] <- NSCLC_pCSC_groups[[5]]
+#NSCLC_pCSC_groups_info_list_tmp[[3]] <- 'Patient 5'
+#NSCLC_pCSC_groups_info_list_tmp[[4]] <- NSCLC_malignant_clusters_info[[5]]
+#names(NSCLC_pCSC_groups_info_list_tmp) <- c('pCSC group name and tumour cells', 'pCSC group positions', 'Source patient name', 'Source patient tumour positions')
+#NSCLC_pCSC_groups_to_run[[10]] <- NSCLC_pCSC_groups_info_list_tmp
+```
+
+Set a few more parameters and rename the expression matrix:
+
+```{r}
+tissue_type                                  <<- "NSCLC"
+outDir                                       <- prefExprDir
+no_ribo                                      <- TRUE  # set to TRUE to remove ribosomal transcripts from some of the expression bar charts
+separate_row_for_high_expression_transcripts <- FALSE # set to TRUE to print highest expression bars on a seperate row
+frag_count_method                            <- 'CellsPM' # Using Cells Per Million values in the expression matrix, but just a name, can be anything
+
+expression_matrix <- tCellsPM_NSCLC_45000
+tCellsPM_NSCLC_45000 <- NULL
+```
+
+__We can now print the preferential expression plots:__
+
+```{r fig.width=20}
+NSCLC_all_results_ranks_list <- list() # Preferential expression ranked results stored here
+
+NSCLC_45000_tumour_only_positions <- NSCLC_45000_tumour_pos
+
+for(r in 1:length(NSCLC_pCSC_groups_to_run)){
+
+    this_sample_name     <- NSCLC_pCSC_groups_to_run[[r]][[3]]
+    this_pCSC_group_name <- NSCLC_pCSC_groups_to_run[[r]][[1]]
+    cat(paste0(this_pCSC_group_name, "; ", this_sample_name, "\n"))
+
+    # Subset transcription info for pCSC group
+    pCSC_group_pos <- NULL    
+    pCSC_group_pos <- NSCLC_pCSC_groups_to_run[[r]][[2]]
+    this_patient_tumour_only_positions <- NSCLC_pCSC_groups_to_run[[r]][[4]]
+
+    # Generate graphs
+    NSCLC_all_results_ranks_list[[r]] <- print_preferential_expression_bar_graphs(
+        pCSC_group_name                    <- this_pCSC_group_name,
+        pCSC_group_positions               <- pCSC_group_pos,
+        HUGO_groups_sets_of_columnNumbers  <- gene_group_positions_to_use,
+        tExprMatr                          <- expression_matrix,
+        tumour_only_positions              <- NSCLC_45000_tumour_only_positions,
+        this_patient_tumour_only_positions,
+        outDir,
+        tissue_type,
+        family_type_name                   <- 'HUGO',
+        patient_source_name                <- this_sample_name,
+        frag_count_method,
+        no_ribo,
+        separate_row_for_high_expression_transcripts,
+        max_number_of_graph_rows_stacked_transcripts <- 2,
+        max_number_of_graph_rows_stacked_families <- 2,
+        all_HUGO_abbreviations_and_fullnames,
+        dataDir
+    )
+    names(NSCLC_all_results_ranks_list)[[r]] <- this_pCSC_group_name
+}
+save(NSCLC_all_results_ranks_list, file = paste0(saveDir, "NSCLC_all_results_ranks_list_raw.RData"))
+#load(paste0(saveDir, "NSCLC_all_results_ranks_list_raw.RData"))
+```
+
+Print cell numbers on the t-SNEs that correspond with the cell labels displayed on the stacked transcript preferential expression bar graphs,
+so that graph can be related to the t-SNE:
+
+```{r}
+cohort_index <- 1
+perpl_index <- 1
+
+for(i in 1:length(NSCLC_pCSC_groups_to_run)){
+    this_pCSC_group_name <- NSCLC_pCSC_groups_to_run[[i]][[1]]
+    this_pCSC_group_pos  <- NSCLC_pCSC_groups_to_run[[i]][[2]]
+    
+    this_perplexity_name <- names(NSCLC_tSNE_list_with_annotations[[cohort_index]])[perpl_index]
+    this_sample_name     <- names(NSCLC_tSNE_list_with_annotations)[[cohort_index]]
+    this_tSNE_results_with_annotations <- NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]] # taking first from perplexity list
+    rownames(this_tSNE_results_with_annotations)[(this_pCSC_group_pos)] <- paste0("#", as.character(1:length(this_pCSC_group_pos)))
+    plot_scores(this_tSNE_results_with_annotations, "Y1", "Y2", this_pCSC_group_name, "Total_transcription", this_sample_name, tSNEsDir, this_pCSC_group_pos)
+    
+    outFile <- paste0(tSNEsDir, this_pCSC_group_name, '-Total_transcription_Y1vsY2.tif') 
+    renamed_file <- paste0(tSNEsDir, this_pCSC_group_name, "-Total_transcription_Y1vsY2-", length(this_pCSC_group_pos), "_cells-labelled.tif")
+    file.rename(outFile, renamed_file)
+}
+```
+
+__Top ranked preferentially expressed genes and gene groups:__
+
+```{r}
+for(i in 1:length(NSCLC_all_results_ranks_list)){
+    cat(paste0("\n## Rankings for ", names(NSCLC_all_results_ranks_list[i]), " ##\n\n"))
+    cat(paste0("Top 100 transcripts for ", names(NSCLC_all_results_ranks_list[i]), ":\n"))
+    print(names(NSCLC_all_results_ranks_list[[i]][[1]]))
+    cat(paste0("\nTop 100 families for ", names(NSCLC_all_results_ranks_list[i]), ":\n"))
+    print(names(NSCLC_all_results_ranks_list[[i]][[2]]))
+    cat(paste0("\nTop 100 transcripts in ranked families for ", names(NSCLC_all_results_ranks_list[i]), ":\n"))
+    print(names(NSCLC_all_results_ranks_list[[i]][[3]][1:100]))
+}
+```
+
+----------
+
+### Step 6: t-SNEs for the Highest Ranked Preferentially Expressed  Genes ############################################
+
+Finally, let's look at the expression patterns of the most preferentially expressed genes, in the t-SNE.
+
+Here are a few examples taken from the top ranked preferentially expressed genes and gene groups, but there are many more
+of interest:
+
+```{r}
+cohort_index <- 1
+perpl_index <- 1
+
+gene_names_to_print <- c(
+    'VCX3A', 'VCX3B', 'VCX', 'GAGE2A', 'PAGE4', # patient 1
+    'PAGE2', 'PAGE2B', 'PAGE1',   # patient 2
+    'INHBC',                      # patient 3
+   #'PAGE4', 'PAGE2B',            # patient 4
+    'SIX3',                       # patient 4
+    'SPANXC', 'SPANXB1', 'ERVV-1' # patient 5
+
+)
+print_tSNE_coloured_by_gene(gene_names_to_print, NSCLC_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], tCounts_NSCLC_45000, run_name, outDir <- tSNEsDir, point_size <- 0.5,
+                            all_HUGO_abbreviations_and_fullnames, dataDir)
+
+```
+
+Well done, if you got this far. This is the end of the CSCPlots tutorials.
+
+If you have questions or comments, please feel free to contact me at phil.b.carter@gmail.com.
+
+Good luck with your single-cell cancer research!
+
+----------

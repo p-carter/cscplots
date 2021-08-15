@@ -1,0 +1,71 @@
+title: CSCPlots
+url: https://github.com/p-carter/CSC-Plots
+template:
+  params:
+    bootswatch: cerulean
+reference:
+- title: "CSCPlots"
+  desc: >
+    Functions for identifying and analysing cancer stem cells from scRNA-Seq
+- title: "CSCPlots - t-SNE Functions"
+  desc: Functions for running t-SNEs on cancer scRNA-Seq
+- contents: 
+  - run_all_tSNEs
+  - run_tSNE
+- title: "CSCPlots - Predictor Functions"
+  desc: Functions for running cell type predictors on cancer scRNA-Seq
+- contents:
+  - run_ML_stemness_predictors
+  - run_ML_cellType_predictors
+- title: "CSCPlots - Plot Functions"
+  desc: Functions for printing t-SNEs & PCAs of cancer scRNA-Seq
+- contents: 
+  - plot_scores
+  - plot_scores_with_grid
+  - plot_categories
+  - plot_categories_with_grid
+  - print_tSNE_coloured_by_gene
+  - plot_field_with_thresholds
+- title: "CSCPlots - Expression Matrix Conversions"
+  desc: >
+    Functions for converting the values in an expression matrix containing 
+    cancer scRNA-Seq
+- contents: 
+  - count_fractions_transcriptwise
+  - count_fractions_per_base_transcriptwise
+  - tpm_samplewise
+- title: "CSCPlots - Preferential Expression Functions"
+  desc: >
+    Functions for printing preferential expression in cell subsets
+    in cancer scRNA-Seq
+- contents: 
+  - print_preferential_expression_bar_graphs
+  - printTripletSingleTranscriptBarcharts
+  - printBarchartSingleTranscriptNoStacking
+  - stackedBarchartsForSingleTranscripts
+  - stackedFamilyExpressionBarchartSingleBars
+- title: "CSCPlots - Misc. Functions"
+  desc: Additional miscellaneous function/s
+- contents: 
+  - add_scores_to_tSNE_results
+  - add_zeros_to_perplexity_values
+  - get_expression_scores_correlations
+  - getGenesFullNames
+  - getGenesAndFullNamesDF
+  - get_gene_lengths_using_gene_names
+  - get_transcript_lengths_using_gene_names
+  - get_HUGO_names_from_gene_IDs
+  - map_gene_positions_to_HUGO_gene_groups
+  - round_up
+  - round_down
+  - select_tSNE_box_positions
+figures:
+  dev: ragg::agg_png
+  dpi: 96
+  dev.args: []
+  fig.ext: png
+  fig.width: 12
+  fig.height: ~
+  fig.retina: 2
+  fig.asp: 1
+  bg: NA

@@ -1,0 +1,39 @@
+Package: cscplots
+Title: Plots to Identify Cancer Stem Cells in Single-Cell RNA-Seq Populations
+    and Understand their Preferential Expression
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Phil",
+           family = "Carter",
+           role = c("aut", "cre"),
+           email = "phil.b.carter@gmail.com",
+           comment = c(ORCID = "0000-0002-0997-8975"))
+Description: Tools for plots to identify putative cancer stem cells
+    from single-cell scRNA-Seq data in expression matrix format e.g. containing
+    read counts or TPMs, and to analyse the cancer stem cells using preferential
+    expression analysis. This will assist in finding transcription driving the
+    tumours that the cell populations are sampled from, e.g. drug resistance,
+    immune evasion, and other molecular features underlying tumour evolution and
+    hardiness.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports:
+    ggplot2,
+    ggrepel,
+    gtools,
+    caret,
+    cowplot,
+    e1071,
+    Matrix,
+    ranger,
+    randomForest,
+    RColorBrewer,
+    Rtsne
+Suggests:
+    biomaRt,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
