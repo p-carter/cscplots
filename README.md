@@ -1,3 +1,5 @@
-Homepage info
+# CSC-Plots Tutorial
 
-Tools for plots to identify putative cancer stem cells from single-cell scRNA-Seq data in expression matrix format e.g. containing read counts or TPMs, and to analyse the cancer stem cells using preferential expression analysis. This will assist in finding transcription driving the tumours that the cell populations are sampled from, e.g. drug resistance, immune evasion, and other molecular features underlying tumour evolution and hardiness.
+Bioinformatics pipeline for identifying and analysing cancer stem cells in single-cell RNA-Seq datasets.
+
+![alt text](https://github.com/p-carter/cscplots/blob/master/cscplots_pipeline.jpg?raw=true)
