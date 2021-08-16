@@ -1,0 +1,11 @@
+pandoc: '2.13'
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  tutorial_2: tutorial_2.html
+  tutorial_3: tutorial_3.html
+last_built: 2021-08-14T15:52Z
+urls:
+  reference: https://github.com/p-carter/CSC-Plots/reference
+  article: https://github.com/p-carter/CSC-Plots/articles
+
