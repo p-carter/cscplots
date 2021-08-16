@@ -15,7 +15,7 @@ Three demonstration pipelines are provided in tutorials 1, 2 and 3, to
 familiarise the use with the steps necessary, and the additional code that is 
 used to join the analysis and plotting together in the necessary way.
 
-### Getting started 
+### Getting Started 
 
 If you are just getting started with **cscplots** it is recommended to start 
 with the tutorial [vignettes](https://p-carter.github.io/cscplots/articles/index.html).
@@ -39,6 +39,6 @@ devtools::install_github("p-carter/cscplots", dependencies = TRUE, build_vignett
 This installation won't include the vignettes (they take some time to build), but all of the vignettes are 
 available online at [p-carter.github.io/cscplots/articles](https://p-carter.github.io/cscplots/articles/).
 
-## Pipeline schema
+## Pipeline Schema
 
 ![alt text](https://github.com/p-carter/cscplots/blob/master/cscplots_pipeline.jpg?raw=true)
