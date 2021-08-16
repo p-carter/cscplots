@@ -1,9 +1,5 @@
 # cscplots
 
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/p-carter/cscplots/workflows/R-CMD-check/badge.svg)](https://github.com/p-carter/cscplots/actions)
-<!-- badges: end -->
-
 ### Overview
 
 **cscplots** is an R package providing a library of functions for use as 
@@ -11,8 +7,6 @@ pipeline tools for identifying and analysing cancer stem cells in single-cell
 RNA-Seq datasets. 
 
 Tools for plots to identify putative cancer stem cells from single-cell scRNA-Seq data in expression matrix format e.g. containing read counts or TPMs, and to analyse the cancer stem cells using preferential expression analysis. This will assist in finding transcription driving the tumours that the cell populations are sampled from, e.g. drug resistance, immune evasion, and other molecular features underlying tumour evolution and hardiness.
-
-![alt text](https://github.com/p-carter/cscplots/blob/master/cscplots_pipeline.jpg?raw=true)
 
 The idea behind **cscplots** is to provide a set of functions that can be used 
 together within R to create a pipeline that takes as input an expression matrix, 
@@ -44,3 +38,7 @@ devtools::install_github("p-carter/cscplots", dependencies = TRUE, build_vignett
 
 This installation won't include the vignettes (they take some time to build), but all of the vignettes are 
 available online at [p-carter.github.io/cscplots/articles](https://p-carter.github.io/cscplots/articles/).
+
+## Pipeline schema
+
+![alt text](https://github.com/p-carter/cscplots/blob/master/cscplots_pipeline.jpg?raw=true)
