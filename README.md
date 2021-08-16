@@ -23,7 +23,7 @@ with the tutorial [vignettes](https://p-carter.github.io/cscplots/articles/index
 ### Resources
 
 * [p-carter.github.io/cscplots](https://p-carter.github.io/cscplots) (online documentation, vignettes)
-* [Open an issue](https://p-carter.github.io/cscplots/issues) (GitHub issues for bug reports, feature requests)
+* [Open an issue](https://github.com/p-carter/cscplots/issues) (GitHub issues for bug reports, feature requests)
 
 ### Installation
 
