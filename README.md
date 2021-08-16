@@ -18,7 +18,7 @@ used to join the analysis and plotting together in the necessary way.
 ### Getting started 
 
 If you are just getting started with **cscplots** it is recommended to start 
-with the tutorials [vignettes](https://p-carter.github.io/cscplots/articles/index.html).
+with the tutorial1 [vignettes](https://p-carter.github.io/cscplots/articles/tutorial_1.html).
 
 ### Resources
 
