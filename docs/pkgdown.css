@@ -21,15 +21,9 @@ body {
   position: relative;
 }
 
-/*body > .container {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-}*/
 body > .container {
   display: flex;
   height: 100%;
-  width: 90%;
   flex-direction: column;
 }
 
@@ -62,11 +56,8 @@ img.icon {
   float: right;
 }
 
-/*img {
-  max-width: 100%;
-}*/
 img {
-  max-width: 120%;
+  max-width: 100%;
 }
 
 /* Fix bug in bootstrap (only seen in firefox) */
