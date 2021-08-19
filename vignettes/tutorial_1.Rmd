@@ -193,7 +193,8 @@ for(i in 1:number_of_samples){
     this_sample_ID  <- names(CDX_tRawCounts_list)[[i]]
     this_tRawCounts <- CDX_tRawCounts_list[[i]]
 
-    this_raw_tSNE_results <- run_all_tSNEs(perplexityValues, this_tRawCounts, paste0("rawCounts_", this_sample_ID), outDir <- tSNEsDirs[[i]], montage <- 0)
+    this_raw_tSNE_results <- run_all_tSNEs(perplexityValues, this_tRawCounts, paste0("rawCounts_",
+                                           this_sample_ID), outDir <- tSNEsDirs[[i]], montage <- 0)
     save(this_raw_tSNE_results, file = paste0(saveDir, "CDX_tSNE_", this_sample_ID, ".RData"))
 
     CDX_tSNE_list[[i]] <- this_raw_tSNE_results
@@ -235,11 +236,29 @@ number_of_genes_to_use <- 16000
 #number_of_genes_to_use <- 16700 # fails on my R installation
 
 CDX_stemness_prediction_DFs_lists <- list()
-CDX_stemness_prediction_DFs_lists[[1]] <- run_ML_stemness_predictors(model_type <- 'ranger',       CDX_tRawCounts_list, hipsci_training_data, stemness_type <- 'hipsci', number_of_genes_to_use, sample_data_type <- 'raw', resultsDir)
+CDX_stemness_prediction_DFs_lists[[1]] <- run_ML_stemness_predictors(model_type <- 'ranger',
+                                                                     CDX_tRawCounts_list,
+                                                                     hipsci_training_data,
+                                                                     stemness_type <- 'hipsci',
+                                                                     number_of_genes_to_use,
+                                                                     sample_data_type <- 'raw',
+                                                                     resultsDir)
 names(CDX_stemness_prediction_DFs_lists)[1] <- "ranger_hipsci_raw"
-CDX_stemness_prediction_DFs_lists[[2]] <- run_ML_stemness_predictors(model_type <- 'rf',           CDX_tRawCounts_list, hipsci_training_data, stemness_type <- 'hipsci', number_of_genes_to_use, sample_data_type <- 'raw', resultsDir)
+CDX_stemness_prediction_DFs_lists[[2]] <- run_ML_stemness_predictors(model_type <- 'rf',
+                                                                     CDX_tRawCounts_list,
+                                                                     hipsci_training_data,
+                                                                     stemness_type <- 'hipsci',
+                                                                     number_of_genes_to_use,
+                                                                     sample_data_type <- 'raw',
+                                                                     resultsDir)
 names(CDX_stemness_prediction_DFs_lists)[2] <- "rf_hipsci_raw"
-CDX_stemness_prediction_DFs_lists[[3]] <- run_ML_stemness_predictors(model_type <- 'randomForest', CDX_tRawCounts_list, hipsci_training_data, stemness_type <- 'hipsci', number_of_genes_to_use, sample_data_type <- 'raw', resultsDir)
+CDX_stemness_prediction_DFs_lists[[3]] <- run_ML_stemness_predictors(model_type <- 'randomForest',
+                                                                     CDX_tRawCounts_list,
+                                                                     hipsci_training_data,
+                                                                     stemness_type <- 'hipsci',
+                                                                     number_of_genes_to_use,
+                                                                     sample_data_type <- 'raw',
+                                                                     resultsDir)
 names(CDX_stemness_prediction_DFs_lists)[3] <- "randomForest_hipsci_raw"
 
 save(CDX_stemness_prediction_DFs_lists, file = paste0(saveDir, "CDX_stemness_prediction_DFs_lists.RData"))
@@ -279,11 +298,15 @@ for(i in 1:length(CDX_tRawCounts_list)){
     names(scores_to_use_list) <- names(CDX_stemness_prediction_DFs_lists)
 
     for(k in 1:length(scores_to_use_list)){
-        score_to_use_index <- which(names(scores_to_use_list[[k]]) == 'IPS') # for HipSci IPS predictions (vs fibro & mononuclear)
+        score_to_use_index <- which(names(scores_to_use_list[[k]]) == 'IPS') # for HipSci
+                                                                             # IPS predictions
+                                                                             # (vs fibro & mononuclear)
         scores_to_use <- scores_to_use_list[[k]][,score_to_use_index]
         
-        CDX_stemness_correlations_list[[length(CDX_stemness_correlations_list)+1]] <- get_expression_scores_correlations(tCounts_to_use, scores_to_use)
-        names(CDX_stemness_correlations_list)[length(CDX_stemness_correlations_list)] <- paste0(names(CDX_tRawCounts_list)[i], "; ", names(scores_to_use_list)[k])
+        CDX_stemness_correlations_list[[length(CDX_stemness_correlations_list)+1]] <-
+            get_expression_scores_correlations(tCounts_to_use, scores_to_use)
+        names(CDX_stemness_correlations_list)[length(CDX_stemness_correlations_list)] <-
+            paste0(names(CDX_tRawCounts_list)[i], "; ", names(scores_to_use_list)[k])
 
         cat(paste0(names(CDX_tRawCounts_list)[i], "; ", names(scores_to_use_list)[k], ":\n"))
         cat(paste0("\nPositive correlations (top 10):\n"))
@@ -314,7 +337,8 @@ for(i in 1:length(CDX_tRawCounts_list)){
         total_transcribed_genes_vec[[j]] <- thisCount
     }
     names(total_transcribed_genes_vec) <- rownames(df)
-    print(cor.test(as.numeric(total_transcribed_genes_vec), as.numeric(total_transcription_levels), method="pearson")) # cor ~0.95
+    print(cor.test(as.numeric(total_transcribed_genes_vec), as.numeric(total_transcription_levels),
+                   method="pearson")) # cor ~0.95
     CDX_total_transcription_levels_list[[i]] <- total_transcription_levels
     CDX_total_transcribed_genes_list[[i]] <- total_transcribed_genes_vec
     names(CDX_total_transcription_levels_list)[i] <- names(CDX_tRawCounts_list)[i]
@@ -326,14 +350,17 @@ CDX_transcription_correlations_list <- list()
 for(i in 1:length(CDX_tRawCounts_list)){
 
     tCounts_to_use <- CDX_tRawCounts_list[[i]]
-    scores_to_use_list <- list(CDX_total_transcription_levels_list[[i]], CDX_total_transcribed_genes_list[[i]])
+    scores_to_use_list <- list(CDX_total_transcription_levels_list[[i]],
+                               CDX_total_transcribed_genes_list[[i]])
     names(scores_to_use_list) <- c("Total transcription", "Total transcribed genes")
 
     for(j in 1:length(scores_to_use_list)){
         scores_to_use <- scores_to_use_list[[j]]        
 
-        CDX_transcription_correlations_list[[length(CDX_transcription_correlations_list)+1]] <- get_expression_scores_correlations(tCounts_to_use, scores_to_use)
-        names(CDX_transcription_correlations_list)[length(CDX_transcription_correlations_list)] <- paste0(names(CDX_tRawCounts_list)[i], "; ", names(scores_to_use_list)[j])
+        CDX_transcription_correlations_list[[length(CDX_transcription_correlations_list)+1]] <-
+            get_expression_scores_correlations(tCounts_to_use, scores_to_use)
+        names(CDX_transcription_correlations_list)[length(CDX_transcription_correlations_list)] <-
+            paste0(names(CDX_tRawCounts_list)[i], "; ", names(scores_to_use_list)[j])
         
         cat(paste0(names(CDX_tRawCounts_list)[i], "; ", names(scores_to_use_list)[j], ":\n"))
         cat(paste0("\nPositive correlations (top 10):\n"))
@@ -360,9 +387,11 @@ if(use_biomart == TRUE){  library("biomaRt")  }
 #if(use_biomart == FALSE){
 #    HUGO_ftp_address <- 'ftp.ebi.ac.uk/pub/databases/genenames/hgnc/tsv/hgnc_complete_set.txt'
 #    download.file(HUGO_ftp_address, "hgnc_complete_set.txt")
-#    all_HUGO_info <- read.csv(paste0("hgnc_complete_set.txt"), header=TRUE, sep="\t", stringsAsFactors = FALSE)
+#    all_HUGO_info <- read.csv(paste0("hgnc_complete_set.txt"), header=TRUE, sep="\t",
+#                              stringsAsFactors = FALSE)
 #    all_HUGO_abbreviations_and_fullnames <- all_HUGO_info[,c(2,3)]
-#    save(all_HUGO_abbreviations_and_fullnames, file = paste0(saveDir, "all_HUGO_abbreviations_and_fullnames.RData"))
+#    save(all_HUGO_abbreviations_and_fullnames, file = paste0(saveDir,
+#        "all_HUGO_abbreviations_and_fullnames.RData"))
 #} else {
 #    mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 #}
@@ -380,7 +409,9 @@ at the others:
 ```{r}
 CDX_top_10_stemness_positive_correlations_no_ribo <- list()
 number_of_correlations <- 100
-stemness_correlations_indices_to_use <- c(1,4) # Manually set for 1="GSM4104161_SC4_Talazoparib.LB17011; ranger_hipsci_raw" 4="GSM4104152_SC4.LB17009; ranger_hipsci_raw"
+stemness_correlations_indices_to_use <- c(1,4) # Manually set for
+                                               # 1="GSM4104161_SC4_Talazoparib.LB17011; ranger_hipsci_raw"
+                                               # 4="GSM4104152_SC4.LB17009; ranger_hipsci_raw"
 for(i in stemness_correlations_indices_to_use){
 #for(i in 1:length(CDX_stemness_correlations_list)){ # Use this for all
     gene_names_to_get <- names(CDX_stemness_correlations_list[[i]][[1]][1:number_of_correlations])
@@ -394,7 +425,8 @@ for(i in stemness_correlations_indices_to_use){
         )
         gene_names_and_functions[which(is.na(gene_names_and_functions[,2])),2] <- '-'
     } else {
-        gene_names_and_functions <- getBM(attributes = c("hgnc_symbol", "description"), filters = 'hgnc_symbol', gene_names_to_get, mart = mart)
+        gene_names_and_functions <- getBM(attributes = c("hgnc_symbol", "description"),
+                                          filters = 'hgnc_symbol', gene_names_to_get, mart = mart)
     }
 
     #print(gene_names_and_functions)
@@ -402,13 +434,15 @@ for(i in stemness_correlations_indices_to_use){
     correlations_with_functions_df <- data.frame(
       genes <- names(correlation_results),
       correlations <- correlation_results,
-      functions <- gene_names_and_functions[match(names(correlation_results), gene_names_and_functions[,1]),2],
+      functions <- gene_names_and_functions[match(names(correlation_results),
+                   gene_names_and_functions[,1]),2],
       stringsAsFactors = FALSE
     )
     colnames(correlations_with_functions_df) <- c('Genes', 'Correlation', 'Function')
     rownames(correlations_with_functions_df) <- NULL
     correlations_with_functions_df[which(is.na(correlations_with_functions_df[,3])),3] <- '-'
-    correlations_with_functions_df[,3] <- gsub(' \\[Source.*', "", correlations_with_functions_df[,3])
+    correlations_with_functions_df[,3] <- gsub(' \\[Source.*', "",
+                                               correlations_with_functions_df[,3])
     to_remove_pos <- grep("ribosomal",  correlations_with_functions_df[,3])
     if(length(to_remove_pos > 0)){
         correlations_with_functions_df_no_ribo <- correlations_with_functions_df[-c(to_remove_pos),]
@@ -421,8 +455,10 @@ for(i in stemness_correlations_indices_to_use){
     #print(correlations_with_functions_df_no_ribo)
 
     top_10_stemness_position <- (length(CDX_top_10_stemness_positive_correlations_no_ribo) + 1)
-    CDX_top_10_stemness_positive_correlations_no_ribo[[(top_10_stemness_position)]] <- correlations_with_functions_df_no_ribo[1:10,1]
-    names(CDX_top_10_stemness_positive_correlations_no_ribo)[top_10_stemness_position] <- names(CDX_stemness_correlations_list)[i]
+    CDX_top_10_stemness_positive_correlations_no_ribo[[(top_10_stemness_position)]] <-
+        correlations_with_functions_df_no_ribo[1:10,1]
+    names(CDX_top_10_stemness_positive_correlations_no_ribo)[top_10_stemness_position] <-
+        names(CDX_stemness_correlations_list)[i]
 }
 
 cat(paste0("Top 10 positive correlations with ribosomal removed:\n"))
@@ -434,7 +470,9 @@ And we'll do the same, for the high transcription associated genes:
 ```{r}
 CDX_top_10_transcription_positive_correlations_no_ribo <- list()
 number_of_correlations <- 100
-transcription_correlations_indices_to_use <- c(1,3) # Manually set for 1="GSM4104161_SC4_Talazoparib.LB17011; Total transcription" 3="GSM4104152_SC4.LB17009; Total transcription"
+transcription_correlations_indices_to_use <- c(1,3) # Manually set for
+                                                    # 1="GSM4104161_SC4_Talazoparib.LB17011; Total transcription"
+                                                    # 3="GSM4104152_SC4.LB17009; Total transcription"
 for(i in transcription_correlations_indices_to_use){
 #for(i in 1:length(CDX_transcription_correlations_list)){ # Use for all
     gene_names_to_get <- names(CDX_transcription_correlations_list[[i]][[1]][1:number_of_correlations])
@@ -447,21 +485,25 @@ for(i in transcription_correlations_indices_to_use){
         )
         gene_names_and_functions[which(is.na(gene_names_and_functions[,2])),2] <- '-'
     } else {
-        gene_names_and_functions <- getBM(attributes = c("hgnc_symbol", "description"), filters = 'hgnc_symbol', gene_names_to_get, mart = mart)
+        gene_names_and_functions <- getBM(attributes = c("hgnc_symbol", "description"),
+                                          filters = 'hgnc_symbol', gene_names_to_get, mart = mart)
     }
     #print(gene_names_and_functions)
     correlation_results <- CDX_transcription_correlations_list[[i]][[1]][1:number_of_correlations]
     correlations_with_functions_df <- data.frame(
       genes <- names(correlation_results),
       correlations <- correlation_results,
-      functions <- gene_names_and_functions[match(names(correlation_results), gene_names_and_functions[,1]),2],
+      functions <- gene_names_and_functions[match(names(correlation_results),
+                   gene_names_and_functions[,1]),2],
       stringsAsFactors = FALSE
     )
     colnames(correlations_with_functions_df) <- c('Genes', 'Correlation', 'Function')
     rownames(correlations_with_functions_df) <- NULL
     correlations_with_functions_df[which(is.na(correlations_with_functions_df[,3])),3] <- '-'
-    correlations_with_functions_df[,3] <- gsub(' \\[Source.*', "", correlations_with_functions_df[,3])
-    correlations_with_functions_df_no_ribo <- correlations_with_functions_df[-c(grep("ribosomal",  correlations_with_functions_df[,3])),]
+    correlations_with_functions_df[,3] <- gsub(' \\[Source.*', "",
+                                               correlations_with_functions_df[,3])
+    correlations_with_functions_df_no_ribo <-
+        correlations_with_functions_df[-c(grep("ribosomal",  correlations_with_functions_df[,3])),]
 
     #cat(paste0('Correlations (top ', number_of_correlations, '):\n'))
     #print(correlations_with_functions_df)
@@ -469,8 +511,10 @@ for(i in transcription_correlations_indices_to_use){
     #print(correlations_with_functions_df_no_ribo)
 
     top_10_transcription_position <- (length(CDX_top_10_transcription_positive_correlations_no_ribo) + 1)
-    CDX_top_10_transcription_positive_correlations_no_ribo[[(top_10_transcription_position)]] <- correlations_with_functions_df_no_ribo[1:10,1]
-    names(CDX_top_10_transcription_positive_correlations_no_ribo)[top_10_transcription_position] <- names(CDX_transcription_correlations_list)[i]
+    CDX_top_10_transcription_positive_correlations_no_ribo[[(top_10_transcription_position)]] <-
+        correlations_with_functions_df_no_ribo[1:10,1]
+    names(CDX_top_10_transcription_positive_correlations_no_ribo)[top_10_transcription_position] <-
+        names(CDX_transcription_correlations_list)[i]
 }
 
 cat(paste0("Top 10 positive correlations with ribosomal removed:\n"))
@@ -510,15 +554,21 @@ for(i in 1:length(CDX_tSNE_list)){
 
     tSNE_results_with_annotations_tmp <- CDX_tSNE_list[[i]]
 
-    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
-                                                                    as.numeric(CDX_total_transcription_levels_list[[i]]), "Total_transcription")
-    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
-                                                                    as.numeric(CDX_total_transcribed_genes_list[[i]]), "Total_transcribed_genes")
+    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
+                                                                    perplexityValues,
+                                                                    as.numeric(CDX_total_transcription_levels_list[[i]]),
+                                                                    "Total_transcription")
+    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
+                                                                    perplexityValues,
+                                                                    as.numeric(CDX_total_transcribed_genes_list[[i]]),
+                                                                    "Total_transcribed_genes")
 
     for(j in 1:length(CDX_stemness_prediction_DFs_lists)){
-        tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp, perplexityValues,
+        tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
+                                                                        perplexityValues,
                                                                         scores <- CDX_stemness_prediction_DFs_lists[[j]][[i]][,stemness_score_indices_to_use[j]],
-                                                                        scoresName <- paste0(names(CDX_stemness_prediction_DFs_lists[j]), "_",
+                                                                        scoresName <- paste0(names(CDX_stemness_prediction_DFs_lists[j]),
+                                                                        "_",
                                                                         names(CDX_stemness_prediction_DFs_lists[[j]][[i]])[stemness_score_indices_to_use[j]]))
     }
 
@@ -535,16 +585,22 @@ save(CDX_tSNE_list_with_annotations, file = paste0(saveDir, "CDX_tSNE_list_with_
 Use the newly annotated tSNE list (CDX_tSNE_list_with_annotations), to plot the t-SNEs overlaid with stemness scores and transcription levels:
 
 ```{r}
-# Print all the annotated scores previously added i.e. Total_transcription, Total_transcribed_genes, ranger_hipsci_raw_IPS, etc.
+# Print all the annotated scores previously added i.e. Total_transcription, Total_transcribed_genes,
+# ranger_hipsci_raw_IPS, etc.
 for(i in 1:length(CDX_tRawCounts_list)){
     #j <- 1 # perplexity values index
     for(j in 1:length(perplexityValues)){
-        #outDir <- paste0(tSNEsDir, names(CDX_tSNE_list_with_annotations)[i], "/"); dir.create(file.path(outDir), showWarnings = FALSE)
+        #outDir <- paste0(tSNEsDir, names(CDX_tSNE_list_with_annotations)[i], "/")
+        #dir.create(file.path(outDir), showWarnings = FALSE)
         outDir <- tSNEsDirs[[i]]
         
-        for(k in 3:length(names(CDX_tSNE_list_with_annotations[[i]][[j]]))){ # 1:2 are the Y1 & Y2 values so skip them
-            plot_scores(CDX_tSNE_list_with_annotations[[i]][[j]], "Y1", "Y2", runName <- tSNE_run_names[j], scoresName <- names(CDX_tSNE_list_with_annotations[[i]][[j]])[k],
-                        datasetName <- names(CDX_tSNE_list_with_annotations)[i], outDir, labelPositions <- NULL, colourPositions <- NULL, highestOnTop <- TRUE)
+        for(k in 3:length(names(CDX_tSNE_list_with_annotations[[i]][[j]]))){ # 1:2 are the Y1 & Y2
+                                                                             # values so skip them
+            plot_scores(CDX_tSNE_list_with_annotations[[i]][[j]], "Y1", "Y2",
+                        runName <- tSNE_run_names[j],
+                        scoresName <- names(CDX_tSNE_list_with_annotations[[i]][[j]])[k],
+                        datasetName <- names(CDX_tSNE_list_with_annotations)[i], outDir,
+                        labelPositions <- NULL, colourPositions <- NULL, highestOnTop <- TRUE)
         }
     }
 }
@@ -559,12 +615,17 @@ We will select the genes to print their expression within the t-SNE; here we'll 
 positive correlations, in __either__ sample:
 
 ```{r}
-gene_names_to_print_1 <- c(CDX_top_10_stemness_positive_correlations_no_ribo[[1]], CDX_top_10_transcription_positive_correlations_no_ribo[[1]])
-gene_names_to_print_2 <- c(CDX_top_10_stemness_positive_correlations_no_ribo[[2]], CDX_top_10_transcription_positive_correlations_no_ribo[[2]])
-gene_names_to_print <- unique(c(gene_names_to_print_1[which(gene_names_to_print_1 %in% gene_names_to_print_2)],
-                                gene_names_to_print_2[which(gene_names_to_print_2 %in% gene_names_to_print_1)]))
+gene_names_to_print_1 <- c(CDX_top_10_stemness_positive_correlations_no_ribo[[1]],
+                           CDX_top_10_transcription_positive_correlations_no_ribo[[1]])
+gene_names_to_print_2 <- c(CDX_top_10_stemness_positive_correlations_no_ribo[[2]],
+                           CDX_top_10_transcription_positive_correlations_no_ribo[[2]])
+gene_names_to_print <- unique(c(gene_names_to_print_1[which(gene_names_to_print_1 %in%
+                                                            gene_names_to_print_2)],
+                                gene_names_to_print_2[which(gene_names_to_print_2 %in%
+                                                            gene_names_to_print_1)]))
 
-perpl_index <- 1 # if multiple perplexity values were used for t-SNEs, this number defines the index in the list of t-SNEs to use
+perpl_index <- 1 # if multiple perplexity values were used for t-SNEs, this number defines the
+                 # index in the list of t-SNEs to use
 run_name <- tSNE_run_names[perpl_index]
 ```
 
@@ -572,8 +633,11 @@ Then we print the t-SNEs showing expression of the chosen genes, for manual insp
 
 ```{r}
 for(cohort_index in 1:2){
-    print_tSNE_coloured_by_gene(gene_names_to_print, CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], CDX_tRawCounts_list[[cohort_index]],
-                                run_name, outDir <- tSNEsDirs[[cohort_index]], point_size <- 2, all_HUGO_abbreviations_and_fullnames, dataDir)
+    print_tSNE_coloured_by_gene(gene_names_to_print,
+                                CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]],
+                                CDX_tRawCounts_list[[cohort_index]],
+                                run_name, outDir <- tSNEsDirs[[cohort_index]], point_size <- 2,
+                                all_HUGO_abbreviations_and_fullnames, dataDir)
 }
 ```
 
@@ -597,8 +661,11 @@ elevated in a subset of cells that may be driving the tumour.
 ```{r}
 gene_names_to_print <- 'PARP1'
 for(cohort_index in 1:2){
-    print_tSNE_coloured_by_gene(gene_names_to_print, CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], CDX_tRawCounts_list[[cohort_index]],
-                                run_name, tSNEsDirs[[cohort_index]], point_size <- 2, all_HUGO_abbreviations_and_fullnames, dataDir)
+    print_tSNE_coloured_by_gene(gene_names_to_print,
+                                CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]],
+                                CDX_tRawCounts_list[[cohort_index]],
+                                run_name, tSNEsDirs[[cohort_index]], point_size <- 2,
+                                all_HUGO_abbreviations_and_fullnames, dataDir)
 }
 ```
 
@@ -621,8 +688,10 @@ perpl_index <- 1
 outDir <- pCSCsDirs[[cohort_index]]
 run_name <- tSNE_run_names[perpl_index]
 
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, scoresName <- "Total_transcription",
-                      datasetName <- names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, labelPositions <- NULL, colourPositions <- NULL, highestOnTop <- TRUE)
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, scoresName <- "Total_transcription",
+                      datasetName <- names(CDX_tSNE_list_with_annotations)[cohort_index], outDir,
+                      labelPositions <- NULL, colourPositions <- NULL, highestOnTop <- TRUE)
 ```
 
 In the plot that was just generated, on the Y2 axis, in my plot (yours may be slightly different) cells located above Y2 = 39 appear interesting. In the plots
@@ -646,11 +715,15 @@ found_pos1_ordered <- found_pos1[rev(order(CDX_tSNE_list_with_annotations[[cohor
 To check the selection, plot with highlighted or labelled selected cells - output is in a file ending in "with_grid-selected_cells.tif" or "with_grid-annotated.tif":
 
 ```{r}
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL, colourPositions <- found_pos1_ordered, highestOnTop <- TRUE) # selected cells in black
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL,
+                      colourPositions <- found_pos1_ordered, highestOnTop <- TRUE) # selected cells in black
 
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, labelPositions <- found_pos1_ordered, NULL, highestOnTop <- TRUE) # selected cell names labelled
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir,
+                      labelPositions <- found_pos1_ordered, NULL, highestOnTop <- TRUE) # selected cell names labelled
 ```
 
 These are the cell IDs for this pCSC group, and we'll store their expression matrix positions for later use:
@@ -658,8 +731,10 @@ These are the cell IDs for this pCSC group, and we'll store their expression mat
 ```{r}
 CDX_pCSC_group_1_SC4_Talazoparib.LB17011 <- found_pos1_ordered
 
-CDX_pCSC_group_1_SC4_Talazoparib.LB17011_df <- CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos1_ordered,]
-CDX_pCSC_group_1_SC4_Talazoparib.LB17011_cell_names <- rownames(CDX_pCSC_group_1_SC4_Talazoparib.LB17011_df)
+CDX_pCSC_group_1_SC4_Talazoparib.LB17011_df <-
+    CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos1_ordered,]
+CDX_pCSC_group_1_SC4_Talazoparib.LB17011_cell_names <-
+    rownames(CDX_pCSC_group_1_SC4_Talazoparib.LB17011_df)
 cat(CDX_pCSC_group_1_SC4_Talazoparib.LB17011_cell_names, sep = '\n')
 ```
 
@@ -672,8 +747,10 @@ perpl_index <- 1
 outDir <- pCSCsDirs[[cohort_index]]
 run_name <- tSNE_run_names[perpl_index]
 
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NULL, highestOnTop <- TRUE)
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL, NULL,
+                      highestOnTop <- TRUE)
 ```
 
 In my version of the t-SNE for this sample, I selected cells below -14 on the Y2 axis due to their exceptionally high transcription levels, and because these cells
@@ -684,21 +761,26 @@ found_pos2 <- which(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]
 #found_pos2 <- c(186, 266, 560, 1213, 2108, 2490, 3474, 3604, 4071, 4141, 5038, 5064, 5364) # these are the cells I selected
 
 # reorder by total transcription
-found_pos2_ordered <- found_pos2[rev(order(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos2,3]))]
+found_pos2_ordered <-
+    found_pos2[rev(order(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos2,3]))]
 ```
 
 Highlighted cells in black:
 
 ```{r}
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL, colourPositions <- found_pos2_ordered, highestOnTop <- TRUE)
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL,
+                      colourPositions <- found_pos2_ordered, highestOnTop <- TRUE)
 ```
 
 And with cell labels:
 
 ```{r}
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, labelPositions <- found_pos2_ordered, NULL, highestOnTop <- TRUE)
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir,
+                      labelPositions <- found_pos2_ordered, NULL, highestOnTop <- TRUE)
 ```
 
 Store the pCSC group for this sample for later use, and show the cell names:
@@ -706,7 +788,8 @@ Store the pCSC group for this sample for later use, and show the cell names:
 ```{r}
 CDX_pCSC_group_2_SC4.LB17009 <- found_pos2_ordered
 
-CDX_pCSC_group_2_SC4.LB17009_df <- CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos2_ordered,]
+CDX_pCSC_group_2_SC4.LB17009_df <-
+    CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos2_ordered,]
 CDX_pCSC_group_2_SC4.LB17009_cell_names <- rownames(CDX_pCSC_group_2_SC4.LB17009_df)
 cat(CDX_pCSC_group_2_SC4.LB17009_cell_names, sep = '\n')
 ```
@@ -725,10 +808,14 @@ run_name <- tSNE_run_names[perpl_index]
 
 found_pos3 <- rev(order(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]]$Total_transcription))[1:n]
 CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos3,3]
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL, colourPositions <- found_pos3, highestOnTop <- TRUE) # selected cells in black
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, labelPositions <- found_pos3, NULL, highestOnTop <- TRUE) # labelled cells
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL,
+                      colourPositions <- found_pos3, highestOnTop <- TRUE) # selected cells in black
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir,
+                      labelPositions <- found_pos3, NULL, highestOnTop <- TRUE) # labelled cells
 ```
 
 And now, automatic selection for the second sample:
@@ -744,10 +831,14 @@ run_name <- tSNE_run_names[perpl_index]
 
 found_pos4 <- rev(order(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]]$Total_transcription))[1:n]
 CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos4,3]
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL, colourPositions <- found_pos4, highestOnTop <- TRUE) # black cells
-plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", run_name, "Total_transcription",
-                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, labelPositions <- found_pos4, NULL, highestOnTop <- TRUE) # cell labels
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL,
+                      colourPositions <- found_pos4, highestOnTop <- TRUE) # black cells
+plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      run_name, "Total_transcription",
+                      names(CDX_tSNE_list_with_annotations)[cohort_index], outDir,
+                      labelPositions <- found_pos4, NULL, highestOnTop <- TRUE) # cell labels
 ```
 
 ... but looking at the t-SNE, I would refine it to the top 8, as this is more consistent with the tip of the t-SNE shape.
@@ -767,12 +858,14 @@ cohort_index <- 1
 CDX_transcript_names <- colnames(CDX_tRawCounts_list[[cohort_index]])
 
 # Create a list of HUGO gene groups, with each group containing the position of each group member in the expression matrix columns 
-CDX_all_HUGO_groups_positions <- map_gene_positions_to_HUGO_gene_groups(CDX_transcript_names, all_HUGO_groups_mordered)
+CDX_all_HUGO_groups_positions <-
+    map_gene_positions_to_HUGO_gene_groups(CDX_transcript_names, all_HUGO_groups_mordered)
 save(CDX_all_HUGO_groups_positions, file = paste0(saveDir, "CDX_all_HUGO_group_positions.RData"))
 #load(paste0(saveDir, "CDX_all_HUGO_group_positions.RData"))
 
 # Subset to use HUGO gene groups that have two or more members in the gene expression matrix
-CDX_all_HUGO_groups_positions_two_or_more <- CDX_all_HUGO_groups_positions[which(lengths(CDX_all_HUGO_groups_positions) >= 2)]
+CDX_all_HUGO_groups_positions_two_or_more <-
+    CDX_all_HUGO_groups_positions[which(lengths(CDX_all_HUGO_groups_positions) >= 2)]
 gene_group_positions_to_use <- CDX_all_HUGO_groups_positions_two_or_more
 ```
 
@@ -785,26 +878,33 @@ CDX_pCSC_groups_info_list_tmp <- list()
 CDX_pCSC_groups_info_list_tmp[[1]] <- 'pCSC_group_1_SC4_Talazoparib.LB17011'   # pCSC group name
 CDX_pCSC_groups_info_list_tmp[[2]] <- CDX_pCSC_group_1_SC4_Talazoparib.LB17011 # pCSC group positions
 CDX_pCSC_groups_info_list_tmp[[3]] <- 1                                        # matrix position in CDX_tRawCounts_list
-names(CDX_pCSC_groups_info_list_tmp) <- c('pCSC group name', 'pCSC group positions', 'Expression matrix list index')
+names(CDX_pCSC_groups_info_list_tmp) <- c('pCSC group name', 'pCSC group positions',
+                                          'Expression matrix list index')
 CDX_pCSC_groups_to_run[[1]] <- CDX_pCSC_groups_info_list_tmp
 
 CDX_pCSC_groups_info_list_tmp <- list()
-CDX_pCSC_groups_info_list_tmp[[1]] <- 'pCSC_group_2_SC4.LB17009'          # pCSC group name                       
-CDX_pCSC_groups_info_list_tmp[[2]] <- CDX_pCSC_group_2_SC4.LB17009        # pCSC group positions                  
+CDX_pCSC_groups_info_list_tmp[[1]] <- 'pCSC_group_2_SC4.LB17009'          # pCSC group name
+CDX_pCSC_groups_info_list_tmp[[2]] <- CDX_pCSC_group_2_SC4.LB17009        # pCSC group positions
 CDX_pCSC_groups_info_list_tmp[[3]] <- 2 # position in CDX_tRawCounts_list # matrix position in CDX_tRawCounts_list
-names(CDX_pCSC_groups_info_list_tmp) <- c('pCSC group name', 'pCSC group positions', 'Expression matrix list index')
+names(CDX_pCSC_groups_info_list_tmp) <- c('pCSC group name', 'pCSC group positions',
+                                          'Expression matrix list index')
 CDX_pCSC_groups_to_run[[2]] <- CDX_pCSC_groups_info_list_tmp
 
 tissue_type       <<- "CDX"
 frag_count_method <- 'raw'  # expression measurement type, but just a name, can be anything
 
-no_ribo                                      <- TRUE  # set to TRUE to remove ribosomal transcripts from some of the expression bar charts
-separate_row_for_high_expression_transcripts <- FALSE # set to TRUE to print highest expression bars on a seperate row
+no_ribo                                      <- TRUE  # set to TRUE to remove ribosomal transcripts
+                                                      # from some of the expression bar charts
+separate_row_for_high_expression_transcripts <- FALSE # set to TRUE to print highest expression bars
+                                                      # on a seperate row
 number_of_graph_rows_stacked_transcripts     <- 1
 number_of_graph_rows_stacked_families        <- 1
 ```
 
 Now that preparations are complete, we can __print the preferential expression plots__.
+
+(If the images generated look small when viewing them in the web pages, you could try opening each of them in a new tab
+e.g. by using a right mouse click.)
 
 ```{r fig.width=30}
 CDX_all_results_ranks_list <- list() # preferential expression ranks will be stored in here
@@ -820,7 +920,8 @@ for(r in 1:length(CDX_pCSC_groups_to_run)){
     this_pCSC_group_name <- CDX_pCSC_groups_to_run[[r]][[1]]
     cat(paste0(this_pCSC_group_name, "; ", this_CDX_name, "\n"))
 
-    CDX_tumour_only_positions <- 1:nrow(expression_matrix) # can be restricted to a subset, not necessary for CDXs
+    CDX_tumour_only_positions <- 1:nrow(expression_matrix) # can be restricted to a subset,
+                                                           # not necessary for CDXs
 
     # Subset transcription info for pCSC group
     pCSC_group_pos <- CDX_pCSC_groups_to_run[[r]][[2]]
@@ -864,13 +965,17 @@ for(i in 1:length(CDX_pCSC_groups_to_run)){
     this_pCSC_group_pos  <- CDX_pCSC_groups_to_run[[i]][[2]]
     this_perplexity_name <- names(CDX_tSNE_list_with_annotations[[(exprMatr_list_index)]])[perpl_index]
     this_sample_name     <- names(CDX_tSNE_list_with_annotations)[[(exprMatr_list_index)]]
-    this_tSNE_results_with_annotations <- CDX_tSNE_list_with_annotations[[(exprMatr_list_index)]][[perpl_index]]
-    rownames(this_tSNE_results_with_annotations)[(this_pCSC_group_pos)] <- paste0("#", as.character(1:length(this_pCSC_group_pos)))
-    plot_scores(this_tSNE_results_with_annotations, "Y1", "Y2", this_pCSC_group_name, "Total_transcription",
-                names(CDX_tSNE_list_with_annotations)[exprMatr_list_index], tSNEsDirs[[exprMatr_list_index]], this_pCSC_group_pos)
+    this_tSNE_results_with_annotations <-
+        CDX_tSNE_list_with_annotations[[(exprMatr_list_index)]][[perpl_index]]
+    rownames(this_tSNE_results_with_annotations)[(this_pCSC_group_pos)] <-
+        paste0("#", as.character(1:length(this_pCSC_group_pos)))
+    plot_scores(this_tSNE_results_with_annotations, "Y1", "Y2", this_pCSC_group_name,
+                "Total_transcription", names(CDX_tSNE_list_with_annotations)[exprMatr_list_index],
+                tSNEsDirs[[exprMatr_list_index]], this_pCSC_group_pos)
     
     outFile <- paste0(tSNEsDirs[[i]], this_pCSC_group_name, '-Total_transcription_Y1vsY2.tif') 
-    renamed_file <- paste0(tSNEsDirs[[i]], this_pCSC_group_name, "-Total_transcription_Y1vsY2-", length(this_pCSC_group_pos), "_cells-labelled.tif")
+    renamed_file <- paste0(tSNEsDirs[[i]], this_pCSC_group_name, "-Total_transcription_Y1vsY2-",
+                           length(this_pCSC_group_pos), "_cells-labelled.tif")
     file.rename(outFile, renamed_file)
 }
 ```
@@ -894,7 +999,7 @@ for(i in 1:length(CDX_all_results_ranks_list)){
 To understand further the importance of the the highest ranked preferentially expressed genes, we'll  view their expression patterns within the
 t-SNEs.
 
-For example, let's look at how the AP-1 transcription factor components FOS, JUN & JUNB are expressed, as they ranked highly.
+For example, let's look at AP-1 transcription factor components FOS, JUN & JUNB, as they ranked highly.
 ```{r}
 gene_names_to_print <- c('FOS', 'JUN', 'JUNB')
 
@@ -902,12 +1007,15 @@ perpl_index <- 1
 run_name <- tSNE_run_names[perpl_index]
 
 for(cohort_index in 1:2){
-    print_tSNE_coloured_by_gene(gene_names_to_print, CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], CDX_tRawCounts_list[[cohort_index]],
-                                run_name, outDir <- tSNEsDirs[[cohort_index]], point_size <- 2, all_HUGO_abbreviations_and_fullnames, dataDir)
+    print_tSNE_coloured_by_gene(gene_names_to_print,
+                                CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]],
+                                CDX_tRawCounts_list[[cohort_index]],
+                                run_name, outDir <- tSNEsDirs[[cohort_index]], point_size <- 2,
+                                all_HUGO_abbreviations_and_fullnames, dataDir)
 }
 ```
 
 This is the end of CSCPlots tutorial 1.
 
-__Now try tutorial 2__, which looks at CSCs from melanoma and evaluates their preferential expression. This is a more
+__Now try [tutorial 2](tutorial_2.html)__, which looks at CSCs from melanoma and evaluates their preferential expression. This is a more
 complex example from the perspective of having one cell population composed of multiple cell types from multiple samples.
