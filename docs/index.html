@@ -85,10 +85,50 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-<p>Homepage info</p>
+<div id="cscplots" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#cscplots" class="anchor"></a>cscplots</h1></div>
+<div id="overview" class="section level3">
+<h3 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h3>
+<p><strong>cscplots</strong> is an R package providing a library of functions for use as pipeline tools for identifying and analysing cancer stem cells in single-cell RNA-Seq datasets.</p>
 <p>Tools for plots to identify putative cancer stem cells from single-cell scRNA-Seq data in expression matrix format e.g. containing read counts or TPMs, and to analyse the cancer stem cells using preferential expression analysis. This will assist in finding transcription driving the tumours that the cell populations are sampled from, e.g. drug resistance, immune evasion, and other molecular features underlying tumour evolution and hardiness.</p>
-
+<p>The idea behind <strong>cscplots</strong> is to provide a set of functions that can be used together within R to create a pipeline that takes as input an expression matrix, and through successive steps identify and then analyses cancer stem cells. Three demonstration pipelines are provided in tutorials 1, 2 and 3, to familiarise the use with the steps necessary, and the additional code that is used to join the analysis and plotting together in the necessary way.</p>
+</div>
+<div id="getting-started" class="section level3">
+<h3 class="hasAnchor">
+<a href="#getting-started" class="anchor"></a>Getting Started</h3>
+<p>If you are just getting started with <strong>cscplots</strong> it is recommended to start with the tutorial <a href="https://p-carter.github.io/cscplots/articles/index.html">vignettes</a>.</p>
+</div>
+<div id="resources" class="section level3">
+<h3 class="hasAnchor">
+<a href="#resources" class="anchor"></a>Resources</h3>
+<ul>
+<li>
+<a href="https://p-carter.github.io/cscplots">p-carter.github.io/cscplots</a> (online documentation, vignettes)</li>
+<li>
+<a href="https://github.com/p-carter/cscplots/issues">Open an issue</a> (GitHub issues for bug reports, feature requests)</li>
+</ul>
+</div>
+<div id="installation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h3>
+<ul>
+<li>Install latest development version from GitHub (requires <a href="https://github.com/hadley/devtools">devtools</a> package):</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"p-carter/cscplots"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span>, build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p>This installation won’t include the vignettes (they take some time to build), but all of the vignettes are available online at <a href="https://p-carter.github.io/cscplots/articles/">p-carter.github.io/cscplots/articles</a>.</p>
+</div>
+<div id="pipeline-schema" class="section level2">
+<h2 class="hasAnchor">
+<a href="#pipeline-schema" class="anchor"></a>Pipeline Schema</h2>
+<p><img src="https://github.com/p-carter/cscplots/blob/master/cscplots_pipeline.jpg?raw=true" alt="alt text"></p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
