@@ -11,12 +11,11 @@ format e.g. containing read counts or TPMs, and to analyse the cancer stem cells
 analysis. This will assist in finding transcription driving the tumours that the cell populations are sampled
 from, e.g. drug resistance, immune evasion, and other molecular features underlying tumour evolution and hardiness.
 
-The idea behind **cscplots** is to provide a set of functions that can be used 
-together within R to create a pipeline that takes as input an expression matrix, 
-and through successive steps identify and then analyses cancer stem cells. 
-Three demonstration pipelines are provided in tutorials 1, 2 and 3, to 
-familiarise the use with the steps necessary, and the additional code that is 
-used to join the analysis and plotting together in the necessary way.
+The idea behind **cscplots** is to provide a set of functions that can be used together within R to create a
+pipeline that takes as input an expression matrix, and through successive steps identifies and then examines
+preferential expression cancer stem cells. Three demonstration pipelines are provided in tutorials 1, 2 and 3, to
+familiarise the user with the steps necessary, and the additional code that is used to join the analysis and plotting
+together in the necessary way.
 
 ### Getting Started 
 
