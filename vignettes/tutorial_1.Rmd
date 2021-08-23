@@ -1,8 +1,8 @@
 ---
-title: "CSCPlots Tutorial 1"
+title: "cscplots Tutorial 1"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{CSCPlots Tutorial 1}
+  %\VignetteIndexEntry{cscplots Tutorial 1}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ### __Tutorial 1: Identifying and Characterising Cancer Stem Cells In SCLC CDX Single-Cell RNA-Seq__
 
-CSCPlots is a collection of functions that can be combined to create a pipeline, to achieve the objective of finding
+cscplots is a collection of functions that can be combined to create a pipeline, to achieve the objective of finding
 and characterising putative cancer stem cells.
 
 Results from applying this method to scRNA-Seq from several cancer types, will be published in the literature
@@ -43,7 +43,7 @@ eight of these patients' tumours.
 
 OK, let's get started!
 
-### Step 1: Download SCLC CDX scRNA-Seq Expression Matrices ##################################################################################
+### Step 1: Load SCLC CDX scRNA-Seq Expression Matrices ##################################################################################
 
 Firstly, prepare the CDX expression data included data with this package.
 
@@ -225,7 +225,7 @@ bulk RNA-Seq samples.
 print(hipsci_training_data[1:2,1:5]) # data automatically available in this R package
 ```
 
-Now we'll use the run_ML_stemness_predictors function in the CSCPlots package, to use three random forest implementations (ranger, rf, randomForest) to predict
+Now we'll use the run_ML_stemness_predictors function in the cscplots package, to use three random forest implementations (ranger, rf, randomForest) to predict
 stemness in each of the cancer cells in the two samples we will analyse (GSM4104161_SC4_Talazoparib.LB17011 & GSM4104152_SC4.LB17009).
 The number of genes compared, between the HipSci and cancer expression datasets, will be limited to 16,000. If your computational resources are limited, or you
 would like the predictions to run more quickly, you can try using less, but lower than 10,000 is not recommeded.
@@ -534,7 +534,7 @@ high stemness, and that are interesting in the context of the shape of the t-SNE
 The two samples that we are analysing are quite homogenous, both in terms of cell type i.e. all are expected to be malignant cancer cells
 from a CDX, and that the two cell populations are each from a separate tumour.
 
-If you are following this tutorial on the CSCPlots web pages at Github, the generated plots that are shown may appear
+If you are following this tutorial on the cscplots web pages at Github, the generated plots that are shown may appear
 small, and are harder to study in detail. It's recommended to use the high resolution tif files that are printed by the code in this tutorial.
 We'll be looking at the relationships between small numbers of cells in the t-SNEs, so it's important to see them at high resolution.
 This is also true for other plots generated in this tutorial - it's much better to look at the tif files.
@@ -554,22 +554,24 @@ for(i in 1:length(CDX_tSNE_list)){
 
     tSNE_results_with_annotations_tmp <- CDX_tSNE_list[[i]]
 
-    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
-                                                                    perplexityValues,
-                                                                    as.numeric(CDX_total_transcription_levels_list[[i]]),
-                                                                    "Total_transcription")
-    tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
-                                                                    perplexityValues,
-                                                                    as.numeric(CDX_total_transcribed_genes_list[[i]]),
-                                                                    "Total_transcribed_genes")
+    tSNE_results_with_annotations_tmp <-
+        add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
+                                   perplexityValues,
+                                   as.numeric(CDX_total_transcription_levels_list[[i]]),
+                                   "Total_transcription")
+    tSNE_results_with_annotations_tmp <-
+        add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
+                                   perplexityValues,
+                                   as.numeric(CDX_total_transcribed_genes_list[[i]]),
+                                   "Total_transcribed_genes")
 
     for(j in 1:length(CDX_stemness_prediction_DFs_lists)){
-        tSNE_results_with_annotations_tmp <- add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
-                                                                        perplexityValues,
-                                                                        scores <- CDX_stemness_prediction_DFs_lists[[j]][[i]][,stemness_score_indices_to_use[j]],
-                                                                        scoresName <- paste0(names(CDX_stemness_prediction_DFs_lists[j]),
-                                                                        "_",
-                                                                        names(CDX_stemness_prediction_DFs_lists[[j]][[i]])[stemness_score_indices_to_use[j]]))
+        tSNE_results_with_annotations_tmp <-
+            add_scores_to_tSNE_results(tSNE_results_with_annotations_tmp,
+                                       perplexityValues,
+                                       scores <- CDX_stemness_prediction_DFs_lists[[j]][[i]][,stemness_score_indices_to_use[j]],
+                                       scoresName <- paste0(names(CDX_stemness_prediction_DFs_lists[j]), "_",
+                                       names(CDX_stemness_prediction_DFs_lists[[j]][[i]])[stemness_score_indices_to_use[j]]))
     }
 
     CDX_tSNE_list_with_annotations[[i]] <- tSNE_results_with_annotations_tmp
@@ -581,7 +583,6 @@ save(CDX_tSNE_list_with_annotations, file = paste0(saveDir, "CDX_tSNE_list_with_
 ```
 
 #### __5b)__: Plot t-SNE Stemness and Transcription Gradients
-
 Use the newly annotated tSNE list (CDX_tSNE_list_with_annotations), to plot the t-SNEs overlaid with stemness scores and transcription levels:
 
 ```{r}
@@ -606,7 +607,7 @@ for(i in 1:length(CDX_tRawCounts_list)){
 }
 ```
 
-#### __5c)__: Plot t-SNEs with Expression of Highly Stemness and Transcription Associated Genes
+#### __5c)__: Plot t-SNEs with Expression of High Stemness and Transcription Associated Genes
 
 To continue building up a picture of which areas of the t-SNEs may contain putative cancer stem cells, genes correlated with high stemness
 and/or high transcription, will now be displayed.
@@ -648,8 +649,11 @@ that ASCL1 is influential in the samples that we are studying:
 ```{r}
 gene_names_to_print <- 'ASCL1'
 for(cohort_index in 1:2){
-    print_tSNE_coloured_by_gene(gene_names_to_print, CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], CDX_tRawCounts_list[[cohort_index]],
-                                run_name, tSNEsDirs[[cohort_index]], point_size <- 2, all_HUGO_abbreviations_and_fullnames, dataDir)
+    print_tSNE_coloured_by_gene(gene_names_to_print,
+                                CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]],
+                                CDX_tRawCounts_list[[cohort_index]],
+                                run_name, tSNEsDirs[[cohort_index]], point_size <- 2,
+                                all_HUGO_abbreviations_and_fullnames, dataDir)
 }
 ```
 
@@ -706,10 +710,12 @@ will are written to the relevant sample's results directory under "tSNEs/pCSC_gr
 
 ```{r}
 found_pos1 <- which(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]]$Y2 > 39)
-#found_pos1 <- c(165, 889, 893, 1127, 1186, 1277, 1303, 3448, 4175, 4203, 4609, 4874, 5295, 5297, 5425, 5429) # In my plot these are the cells noted in found_pos1
+#found_pos1 <- c(165, 889, 893, 1127, 1186, 1277, 1303, 3448, 4175,
+#                4203, 4609, 4874, 5295, 5297, 5425, 5429) # In my plot these are the cells noted in found_pos1
 
 # reorder by total transcription
-found_pos1_ordered <- found_pos1[rev(order(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos1,3]))]
+found_pos1_ordered <-
+    found_pos1[rev(order(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]][found_pos1,3]))]
 ```
 
 To check the selection, plot with highlighted or labelled selected cells - output is in a file ending in "with_grid-selected_cells.tif" or "with_grid-annotated.tif":
@@ -718,12 +724,14 @@ To check the selection, plot with highlighted or labelled selected cells - outpu
 plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
                       run_name, "Total_transcription",
                       names(CDX_tSNE_list_with_annotations)[cohort_index], outDir, NULL,
-                      colourPositions <- found_pos1_ordered, highestOnTop <- TRUE) # selected cells in black
+                      colourPositions <- found_pos1_ordered,
+                      highestOnTop <- TRUE) # selected cells in black
 
 plot_scores_with_grid(CDX_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
                       run_name, "Total_transcription",
                       names(CDX_tSNE_list_with_annotations)[cohort_index], outDir,
-                      labelPositions <- found_pos1_ordered, NULL, highestOnTop <- TRUE) # selected cell names labelled
+                      labelPositions <- found_pos1_ordered, NULL,
+                      highestOnTop <- TRUE) # selected cell names labelled
 ```
 
 These are the cell IDs for this pCSC group, and we'll store their expression matrix positions for later use:
@@ -852,12 +860,14 @@ Some info needs to be prepared for preferential expression plot of HUGO gene gro
 of a molecular complex). 
 
 ```{r}
-head(all_HUGO_groups_mordered) # automatically available in this package - you can get the most recent info from the HUGO website
+head(all_HUGO_groups_mordered) # automatically available in this package -
+                               # you can get the most recent info from the HUGO website
 
 cohort_index <- 1
 CDX_transcript_names <- colnames(CDX_tRawCounts_list[[cohort_index]])
 
-# Create a list of HUGO gene groups, with each group containing the position of each group member in the expression matrix columns 
+# Create a list of HUGO gene groups, with each group containing the position of each group member in the
+# expression matrix columns 
 CDX_all_HUGO_groups_positions <-
     map_gene_positions_to_HUGO_gene_groups(CDX_transcript_names, all_HUGO_groups_mordered)
 save(CDX_all_HUGO_groups_positions, file = paste0(saveDir, "CDX_all_HUGO_group_positions.RData"))
@@ -877,7 +887,7 @@ CDX_pCSC_groups_to_run <- list()
 CDX_pCSC_groups_info_list_tmp <- list()
 CDX_pCSC_groups_info_list_tmp[[1]] <- 'pCSC_group_1_SC4_Talazoparib.LB17011'   # pCSC group name
 CDX_pCSC_groups_info_list_tmp[[2]] <- CDX_pCSC_group_1_SC4_Talazoparib.LB17011 # pCSC group positions
-CDX_pCSC_groups_info_list_tmp[[3]] <- 1                                        # matrix position in CDX_tRawCounts_list
+CDX_pCSC_groups_info_list_tmp[[3]] <- 1                      # matrix position in CDX_tRawCounts_list
 names(CDX_pCSC_groups_info_list_tmp) <- c('pCSC group name', 'pCSC group positions',
                                           'Expression matrix list index')
 CDX_pCSC_groups_to_run[[1]] <- CDX_pCSC_groups_info_list_tmp
@@ -885,7 +895,7 @@ CDX_pCSC_groups_to_run[[1]] <- CDX_pCSC_groups_info_list_tmp
 CDX_pCSC_groups_info_list_tmp <- list()
 CDX_pCSC_groups_info_list_tmp[[1]] <- 'pCSC_group_2_SC4.LB17009'          # pCSC group name
 CDX_pCSC_groups_info_list_tmp[[2]] <- CDX_pCSC_group_2_SC4.LB17009        # pCSC group positions
-CDX_pCSC_groups_info_list_tmp[[3]] <- 2 # position in CDX_tRawCounts_list # matrix position in CDX_tRawCounts_list
+CDX_pCSC_groups_info_list_tmp[[3]] <- 2                 # matrix position in CDX_tRawCounts_list
 names(CDX_pCSC_groups_info_list_tmp) <- c('pCSC group name', 'pCSC group positions',
                                           'Expression matrix list index')
 CDX_pCSC_groups_to_run[[2]] <- CDX_pCSC_groups_info_list_tmp
@@ -1015,7 +1025,7 @@ for(cohort_index in 1:2){
 }
 ```
 
-This is the end of CSCPlots tutorial 1.
+This is the end of cscplots tutorial 1.
 
 __Now try [tutorial 2](tutorial_2.html)__, which looks at CSCs from melanoma and evaluates their preferential expression. This is a more
 complex example from the perspective of having one cell population composed of multiple cell types from multiple samples.

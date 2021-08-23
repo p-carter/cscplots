@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSCPlots Tutorial 2 • CSCPlots</title>
+<title>cscplots Tutorial 2 • cscplots</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="CSCPlots Tutorial 2">
+<script src="../pkgdown.js"></script><meta property="og:title" content="cscplots Tutorial 2">
 <meta property="og:description" content="cscplots">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -30,7 +30,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">CSCPlots</a>
+        <a class="navbar-link" href="../index.html">cscplots</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -54,13 +54,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/tutorial_1.html">CSCPlots Tutorial 1</a>
+      <a href="../articles/tutorial_1.html">cscplots Tutorial 1</a>
     </li>
     <li>
-      <a href="../articles/tutorial_2.html">CSCPlots Tutorial 2</a>
+      <a href="../articles/tutorial_2.html">cscplots Tutorial 2</a>
     </li>
     <li>
-      <a href="../articles/tutorial_3.html">CSCPlots Tutorial 3</a>
+      <a href="../articles/tutorial_3.html">cscplots Tutorial 3</a>
     </li>
   </ul>
 </li>
@@ -78,7 +78,7 @@
       </header><script src="tutorial_2_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>CSCPlots Tutorial 2</h1>
+      <h1 data-toc-skip>cscplots Tutorial 2</h1>
             
       
       
@@ -93,14 +93,21 @@
 <a href="#tutorial-2-identifying-and-characterising-cancer-stem-cells-in-melanoma-single-cell-rna-seq" class="anchor"></a><strong>Tutorial 2: Identifying and Characterising Cancer Stem Cells In Melanoma Single-Cell RNA-Seq</strong>
 </h3>
 <p>Tutorial 2 uses a melanoma scRNA-Seq dataset published by Tirosh et al. (Science 2016).</p>
-<p>A pipeline will be constructed using functions from the CSCPlots package. This will follow these steps:</p>
+<p>A pipeline will be constructed using functions from the cscplots package. This will follow these steps:</p>
 <ul>
-<li>generate a t-SNE;</li>
-<li>predict stemness in each of the cells, using HipSci iPS expression profiles (RNA-Seq);</li>
-<li>identify genes associated with higher stemness and very high transcription, in malignant melanoma cells;</li>
+<li>generate a t-SNE; predict stemness in each of the cells, using HipSci iPS expression profiles (RNA-Seq); identify genes
+    associated with higher stemness and very high transcription, in malignant melanoma cells;</li>
 <li>use the t-SNE to select putative cancer stem cells, by using the stemness predictions and other information such as transcription gradients and predicted cell types;</li>
 <li>detect preferential expression in the selected putative cancer stem cells using a TPM Count Fractions matrix, to find genes driving these cells.</li>
 </ul>
+
+<p>
+<h4>Tutorial 2 Pipeline Overview:</h4>
+<p>
+<p>
+<center>
+<img src="figures/cscplots_tutorial_2.png" width="900">
+</center>
 </div>
 <div id="step-1-t-sne-generation" class="section level3">
 <h3 class="hasAnchor">
@@ -138,14 +145,16 @@
 <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">dataDir</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>Generate a t-SNE using the melanoma scRNA-Seq expression matrix. The recommended perplexity parameter value to use for the t-SNE is 70, but you can use a list of perplexity values to generate multiple t-SNEs, if you prefer.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#perplexityValues     &lt;&lt;- c(5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130) # using this range is helpful, but takes longer</span>
+<code class="sourceCode R"><span class="co">#perplexityValues     &lt;&lt;- c(5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130) # using</span>
+                                                                 <span class="co"># this range is helpful, but takes longer</span>
 <span class="va">perplexityValues</span>      <span class="op">&lt;&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">70</span><span class="op">)</span>
 <span class="va">perplexityValuesPrint</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_zeros_to_perplexity_values.html">add_zeros_to_perplexity_values</a></span><span class="op">(</span><span class="va">perplexityValues</span><span class="op">)</span>
 <span class="va">tSNE_run_names</span>        <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"tSNE_"</span>, <span class="va">perplexityValuesPrint</span><span class="op">)</span>
 
 <span class="va">outDir</span> <span class="op">&lt;-</span> <span class="va">tSNEsDir</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span> <span class="co"># for reproduction of results in the literature, but comment this out if you would like unfixed results</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span> <span class="co"># for reproduction of results in the literature, but comment this out if you would like</span>
+             <span class="co"># unfixed results</span>
 
 <span class="co"># Data available automatically in this package is also available from</span>
 <span class="co"># https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE72056 </span>
@@ -162,9 +171,9 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">mela_4558_TPM_tSNE_results</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">saveDir</span>, <span class="st">"mela_4558_TPM_tSNE_results.RData"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#load(paste0(saveDir, "mela_4558_TPM_tSNE_results.RData"))</span>
 
-<span class="co"># Add to results to a list, which allows you to add further t-SNEs later (e.g. using subsets of</span>
-<span class="co"># the cell population) - this is necessary for use with some of the cscplots functions used below;</span>
-<span class="co"># a list is expected:</span>
+<span class="co"># Add to results to a list, which allows you to add further t-SNEs later (e.g. using subsets of the cell</span>
+<span class="co"># population) - this is necessary for use with some of the cscplots functions used below; a list is</span>
+<span class="co"># expected:</span>
 <span class="va">mela_tSNE_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">mela_tSNE_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mela_4558_TPM_tSNE_results</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">project_name</span></code></pre></div>
@@ -259,7 +268,8 @@
     <span class="va">total_transcribed_genes_vec</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">thisCount</span>
 <span class="op">}</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">total_transcribed_genes_vec</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
-<span class="co">#print(cor.test(as.numeric(total_transcribed_genes_vec), as.numeric(total_transcription_levels), method="pearson")) # cor 0.9739835 </span>
+<span class="co">#print(cor.test(as.numeric(total_transcribed_genes_vec), as.numeric(total_transcription_levels),</span>
+<span class="co">#               method="pearson")) # cor 0.9739835 </span>
 <span class="va">mela_total_transcription_levels_list</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">total_transcription_levels</span>
 <span class="va">mela_total_transcribed_genes_list</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">total_transcribed_genes_vec</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_total_transcription_levels_list</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">project_name</span>
@@ -326,9 +336,9 @@
 <span class="op">}</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-7-1.png" width="1152"><img src="tutorial_2_files/figure-html/unnamed-chunk-7-2.png" width="1152"><img src="tutorial_2_files/figure-html/unnamed-chunk-7-3.png" width="1152"><img src="tutorial_2_files/figure-html/unnamed-chunk-7-4.png" width="1152"><img src="tutorial_2_files/figure-html/unnamed-chunk-7-5.png" width="1152"></p>
 </div>
-<div id="c-cell-type-plots-and-selection-of-tumour-cell-clusters" class="section level4">
+<div id="c-cell-type-plots-and-additional-info" class="section level4">
 <h4 class="hasAnchor">
-<a href="#c-cell-type-plots-and-selection-of-tumour-cell-clusters" class="anchor"></a><strong>4c)</strong>: Cell Type Plots and Selection of Tumour Cell Clusters</h4>
+<a href="#c-cell-type-plots-and-additional-info" class="anchor"></a><strong>4c)</strong>: Cell Type Plots and Additional Info</h4>
 <p>To further understand the composition of the t-SNE, the cell types present will be visualised. This will use cell annotations provided by the original publication. We’ll also use results from ESTIMATE to show immune scores for each cell, and also stromal scores. If you have a preferred method of cell type prediction e.g. scPred, CIBERSORTx cell type deconvolutions, etc. please feel free to generate and include these results.</p>
 <p>Visualising different types of information about each of the cells helps to build up an understanding of the cell population represented in the t-SNE. This may in turn help the selection of putative cancer stem cells for preferential expression analysis.</p>
 <p>For example, clinically relevant annotations from the original publication can be visualised in the t-SNE e.g. sex, age, survival, drug therapies received, etc.</p>
@@ -339,79 +349,98 @@
 
 <span class="va">cohort_index</span> <span class="op">&lt;-</span> <span class="fl">1</span>
 
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Combined_Pluritest_Score</span>,
-                                                                              <span class="st">"Combined_PluriTest_Score"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Samples</span>,
-                                                                              <span class="st">"Samples"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Cell_malignancy</span>,
-                                                                              <span class="st">"Cell_malignancy"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Cell_type</span>,
-                                                                              <span class="st">"Cell_type"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">ESTIMATE_stromal_scores</span>,
-                                                                              <span class="st">"ESTIMATE_stromal_scores"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">ESTIMATE_immune_scores</span>,
-                                                                              <span class="st">"ESTIMATE_immune_scores"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Combined_Pluritest_Score</span>,
+                               <span class="st">"Combined_PluriTest_Score"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Samples</span>,
+                               <span class="st">"Samples"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Cell_malignancy</span>,
+                               <span class="st">"Cell_malignancy"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Cell_type</span>,
+                               <span class="st">"Cell_type"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">ESTIMATE_stromal_scores</span>,
+                               <span class="st">"ESTIMATE_stromal_scores"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">ESTIMATE_immune_scores</span>,
+                               <span class="st">"ESTIMATE_immune_scores"</span><span class="op">)</span>
                                                                  
 <span class="co"># For fun, if you feel like it:                                  </span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sex</span>,
-                                                                              <span class="st">"Sex"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Age</span>,
-                                                                              <span class="st">"Age"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Survival</span>,
-                                                                              <span class="st">"Survival"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Mutation_status</span>,
-                                                                              <span class="st">"Mutation_status"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">PD1_status</span>,
-                                                                              <span class="st">"PD1_status"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">PDL1_status</span>,
-                                                                              <span class="st">"PDL1_status"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Preop_drug_types</span>,
-                                                                              <span class="st">"Preop_drug_types"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Preop_total_drugs</span>,
-                                                                              <span class="st">"Preop_total_drugs"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Postop_drugs</span>,
-                                                                              <span class="st">"Postop_drugs"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sites</span>,
-                                                                              <span class="st">"Sites"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>, <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sites_concise</span>,
-                                                                              <span class="st">"Sites_concise"</span><span class="op">)</span>
-<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                              <span class="va">perplexityValues</span>,
-                                                                              <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sites_summary</span>,
-                                                                              <span class="st">"Sites_summary"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sex</span>,
+                               <span class="st">"Sex"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Age</span>,
+                               <span class="st">"Age"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Survival</span>,
+                               <span class="st">"Survival"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Mutation_status</span>,
+                               <span class="st">"Mutation_status"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">PD1_status</span>,
+                               <span class="st">"PD1_status"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">PDL1_status</span>,
+                               <span class="st">"PDL1_status"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Preop_drug_types</span>,
+                               <span class="st">"Preop_drug_types"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Preop_total_drugs</span>,
+                               <span class="st">"Preop_total_drugs"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Postop_drugs</span>,
+                               <span class="st">"Postop_drugs"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sites</span>,
+                               <span class="st">"Sites"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sites_concise</span>,
+                               <span class="st">"Sites_concise"</span><span class="op">)</span>
+<span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                               <span class="va">perplexityValues</span>,
+                               <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Sites_summary</span>,
+                               <span class="st">"Sites_summary"</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">saveDir</span>, <span class="st">"mela_tSNE_list_with_annotations.RData"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#load(paste0(saveDir, "mela_tSNE_list_with_annotations.RData"))</span></code></pre></div>
@@ -515,31 +544,34 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 <code class="sourceCode R"><span class="va">number_of_genes_to_use</span> <span class="op">&lt;-</span> <span class="fl">16000</span>
 
 <span class="va">mela_cell_type_prediction_DFs_lists</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_ML_cellType_predictors.html">run_ML_cellType_predictors</a></span><span class="op">(</span><span class="va">model_type</span> <span class="op">&lt;-</span> <span class="st">'ranger'</span>,
-                                                                       <span class="va">mela_tTPM_list</span>,
-                                                                       <span class="va">cellTypeData</span> <span class="op">&lt;-</span> <span class="va">tCounts_NSCLC_10000_with_cell_types</span>,
-                                                                       <span class="va">expressionData_type</span> <span class="op">&lt;-</span> <span class="st">'NSCLC_cell_types'</span>,
-                                                                       <span class="va">number_of_genes_to_use</span>,
-                                                                       <span class="va">sample_data_type</span> <span class="op">&lt;-</span> <span class="st">'TPM'</span>,
-                                                                       <span class="va">resultsDir</span><span class="op">)</span>
+<span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/run_ML_cellType_predictors.html">run_ML_cellType_predictors</a></span><span class="op">(</span><span class="va">model_type</span> <span class="op">&lt;-</span> <span class="st">'ranger'</span>,
+                               <span class="va">mela_tTPM_list</span>,
+                               <span class="va">cellTypeData</span> <span class="op">&lt;-</span> <span class="va">tCounts_NSCLC_10000_with_cell_types</span>,
+                               <span class="va">expressionData_type</span> <span class="op">&lt;-</span> <span class="st">'NSCLC_cell_types'</span>,
+                               <span class="va">number_of_genes_to_use</span>,
+                               <span class="va">sample_data_type</span> <span class="op">&lt;-</span> <span class="st">'TPM'</span>,
+                               <span class="va">resultsDir</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"ranger_NSCLC_cell_types"</span>
 
 <span class="co"># To use more random forest methods:</span>
-<span class="co">#mela_cell_type_prediction_DFs_lists[[2]] &lt;- run_ML_cellType_predictors(model_type &lt;- 'rf',</span>
-<span class="co">#                                                                       mela_tTPM_list,</span>
-<span class="co">#                                                                       cellTypeData &lt;- tCounts_NSCLC_10000_with_cell_types,</span>
-<span class="co">#                                                                       expressionData_type &lt;- 'NSCLC_cell_types',</span>
-<span class="co">#                                                                       number_of_genes_to_use,</span>
-<span class="co">#                                                                       sample_data_type &lt;- 'TPM',</span>
-<span class="co">#                                                                       resultsDir)</span>
+<span class="co">#mela_cell_type_prediction_DFs_lists[[2]] &lt;-</span>
+<span class="co">#    run_ML_cellType_predictors(model_type &lt;- 'rf',</span>
+<span class="co">#                               mela_tTPM_list,</span>
+<span class="co">#                               cellTypeData &lt;- tCounts_NSCLC_10000_with_cell_types,</span>
+<span class="co">#                               expressionData_type &lt;- 'NSCLC_cell_types',</span>
+<span class="co">#                               number_of_genes_to_use,</span>
+<span class="co">#                               sample_data_type &lt;- 'TPM',</span>
+<span class="co">#                               resultsDir)</span>
 <span class="co">#names(mela_cell_type_prediction_DFs_lists)[2] &lt;- "rf_NSCLC_cell_types"</span>
-<span class="co">#mela_cell_type_prediction_DFs_lists[[3]] &lt;- run_ML_cellType_predictors(model_type &lt;- 'randomForest',</span>
-<span class="co">#                                                                       mela_tTPM_list,</span>
-<span class="co">#                                                                       cellTypeData &lt;- tCounts_NSCLC_10000_with_cell_types,</span>
-<span class="co">#                                                                       expressionData_type &lt;- 'NSCLC_cell_types',</span>
-<span class="co">#                                                                       number_of_genes_to_use,</span>
-<span class="co">#                                                                       sample_data_type &lt;- 'TPM',</span>
-<span class="co">#                                                                       resultsDir)</span>
+<span class="co">#mela_cell_type_prediction_DFs_lists[[3]] &lt;-</span>
+<span class="co">#    run_ML_cellType_predictors(model_type &lt;- 'randomForest',</span>
+<span class="co">#                               mela_tTPM_list,</span>
+<span class="co">#                               cellTypeData &lt;- tCounts_NSCLC_10000_with_cell_types,</span>
+<span class="co">#                               expressionData_type &lt;- 'NSCLC_cell_types',</span>
+<span class="co">#                               number_of_genes_to_use,</span>
+<span class="co">#                               sample_data_type &lt;- 'TPM',</span>
+<span class="co">#                               resultsDir)</span>
 <span class="co">#names(mela_cell_type_prediction_DFs_lists)[3] &lt;- "randomForest_NSCLC_cell_types"</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">saveDir</span>, <span class="st">"mela_cell_type_prediction_DFs_lists.RData"</span><span class="op">)</span><span class="op">)</span>
@@ -551,22 +583,25 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 
 <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>    
     <span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">{</span> <span class="co"># do for all cell types</span>
-        <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
-                                                                                      <span class="va">perplexityValues</span>,
-                                                                                      <span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="va">j</span><span class="op">]</span>,
-                                                                                      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, <span class="st">"_"</span>,
-                                                                                      <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">j</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+        <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+            <span class="fu"><a href="../reference/add_scores_to_tSNE_results.html">add_scores_to_tSNE_results</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>,
+                <span class="va">perplexityValues</span>,
+                <span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="va">j</span><span class="op">]</span>,
+                <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, <span class="st">"_"</span>,
+                <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">j</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
     <span class="op">}</span>
 <span class="op">}</span>
 
 <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>    
     <span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
         <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">j</span><span class="op">]</span> <span class="op">==</span> <span class="st">"Alveolar"</span><span class="op">)</span><span class="op">{</span> <span class="co"># Skip alveolar</span>
-            <span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">runName</span> <span class="op">&lt;-</span> <span class="va">tSNE_run_names</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,
+            <span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>,
+                        <span class="va">runName</span> <span class="op">&lt;-</span> <span class="va">tSNE_run_names</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,
                         <span class="va">scoresName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, <span class="st">"_"</span>,
                                              <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_cell_type_prediction_DFs_lists</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">j</span><span class="op">]</span><span class="op">)</span>,
                         <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span>,
-                                             <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span>
+                                             <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>,
+                                             <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span>
         <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
@@ -594,7 +629,8 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 
 <span class="va">gene_names_to_print</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CDK1"</span>, <span class="st">"CDK3"</span>, <span class="st">"CDK14"</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/print_tSNE_coloured_by_gene.html">print_tSNE_coloured_by_gene</a></span><span class="op">(</span><span class="va">gene_names_to_print</span>, <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
+<span class="fu"><a href="../reference/print_tSNE_coloured_by_gene.html">print_tSNE_coloured_by_gene</a></span><span class="op">(</span><span class="va">gene_names_to_print</span>,
+                            <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
                             <span class="va">tTPM_mela_4558</span>, <span class="va">run_name</span>, <span class="va">outDir</span> <span class="op">&lt;-</span> <span class="va">CDKsDir</span>, <span class="va">point_size</span> <span class="op">&lt;-</span> <span class="fl">1</span>,
                             <span class="va">all_HUGO_abbreviations_and_fullnames</span>, <span class="va">dataDir</span><span class="op">)</span>
 <span class="co">#&gt;   CDK1 [cyclin dependent kinase 1]</span></code></pre></div>
@@ -605,9 +641,10 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-15-3.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 </div>
-<div id="e-selection-of-malignant-cell-clusters" class="section level4">
+<div id="e-malignant-cell-clusters" class="section level4">
 <h4 class="hasAnchor">
-<a href="#e-selection-of-malignant-cell-clusters" class="anchor"></a><strong>4e)</strong>: Selection of Malignant Cell Clusters</h4>
+<a href="#e-malignant-cell-clusters" class="anchor"></a><strong>4e)</strong>: Malignant Cell Clusters</h4>
+<p>#####<strong>(i)</strong> Selection of Malignant Cell Clusters</p>
 <p>We now have t-SNE plots coloured using predicted stemness scores, transcription levels, the patient each cell is from, malignancy and cell type annotations from the original publication, and immune and stromal scores from the ESTIMATE software package. Using these different types of information to build up an understanding of this cell population, it’s apparent that there are distinct clusters of malignant cells from different patients in the t-SNE.</p>
 <p>We can select these clusters of malignant cells manually, using the t-SNE. For example, I selected cluster 4 by selecting a group of malignant cells from sample 78 as follows:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -616,25 +653,29 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 <span class="va">outDir</span> <span class="op">&lt;-</span> <span class="va">tSNEsDir</span>
 <span class="va">run_name</span> <span class="op">&lt;-</span> <span class="va">tSNE_run_names</span><span class="op">[</span><span class="va">perpl_index</span><span class="op">]</span>
 
-<span class="fu"><a href="../reference/plot_categories.html">plot_categories</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>,
-                <span class="va">categoryName</span> <span class="op">&lt;-</span> <span class="st">"Samples"</span>, <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/plot_categories.html">plot_categories</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>,
+                <span class="va">run_name</span>, <span class="va">categoryName</span> <span class="op">&lt;-</span> <span class="st">"Samples"</span>,
+                <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-16-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 <p>Plotting with a grid in the background is helpful when selecting cells in the t-SNE:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_categories_with_grid.html">plot_categories_with_grid</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>,
-                          <span class="st">"Samples"</span>, <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_categories_with_grid.html">plot_categories_with_grid</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>,
+                          <span class="va">run_name</span>, <span class="st">"Samples"</span>,
+                          <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-17-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 <p>The cluster to be selected, is in a box that covers the area: Y1 :-33.5 to -40, Y2 = 3 to 8.5 (the coordinates may be slightly different for you.)</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cluster_4_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_tSNE_box_positions.html">select_tSNE_box_positions</a></span><span class="op">(</span>tSNE_info <span class="op">=</span> <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
-                                           Y1_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">33.5</span>,<span class="fl">40</span><span class="op">)</span>, Y2_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">8.5</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">cluster_4_pos</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/select_tSNE_box_positions.html">select_tSNE_box_positions</a></span><span class="op">(</span>tSNE_info <span class="op">=</span> <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
+                              Y1_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">33.5</span>,<span class="fl">40</span><span class="op">)</span>, Y2_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">8.5</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Display cluster 4 in black:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_categories_with_grid.html">plot_categories_with_grid</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>, <span class="st">"Samples"</span>,
-                          <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span>,
-                          <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="va">cluster_4_pos</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_categories_with_grid.html">plot_categories_with_grid</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>,
+                          <span class="va">run_name</span>, <span class="st">"Samples"</span>,
+                          <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
+                          <span class="va">outDir</span>, <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="va">cluster_4_pos</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-19-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 <p>Here’s eight tumour cell clusters each from distinct patients, that we’ll analyse further.</p>
@@ -654,10 +695,12 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 
 <span class="va">mela_clusters_info</span> <span class="op">&lt;-</span> <span class="va">mela_clusters_info</span><span class="op">[</span><span class="op">-</span><span class="fl">9</span><span class="op">]</span> <span class="co"># not going to study cluster 9 here, as it has a less obvious pCSC group</span>
 
-<span class="va">eight_clusters_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,
-                        <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">6</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">8</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>, <span class="st">"Combined_PluriTest_Score"</span>,
-            <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span>, <span class="cn">NULL</span>, <span class="va">eight_clusters_tmp</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="va">eight_clusters_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,
+                        <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">6</span><span class="op">]</span><span class="op">]</span>,
+                        <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_clusters_info</span><span class="op">[[</span><span class="fl">8</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>,
+            <span class="st">"Combined_PluriTest_Score"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
+            <span class="va">outDir</span>, <span class="cn">NULL</span>, <span class="va">eight_clusters_tmp</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-20-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 <p>These are the same groups, shown with cluster labels.</p>
@@ -696,21 +739,19 @@ plot_categories(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], 
 tmpData &lt;- NULL</code></pre>
 <p>This is an outlier cell according to PluriTest with much higher predicted stemness:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>, <span class="st">"Combined_PluriTest_Score"</span>,
-                <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span>, <span class="cn">NULL</span>, <span class="fl">4180</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>,
+            <span class="st">"Combined_PluriTest_Score"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
+            <span class="va">outDir</span>, <span class="cn">NULL</span>, <span class="fl">4180</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-22-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 <p>And this is a small cluster of 7 cells of high stemness cells:</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>, <span class="st">"Combined_PluriTest_Score"</span>,
-            <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>, <span class="va">outDir</span>, <span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4180</span>, <span class="fl">2787</span>, <span class="fl">2859</span>, <span class="fl">2982</span>, <span class="fl">2968</span>, <span class="fl">2978</span>, <span class="fl">3019</span><span class="op">)</span>,
-            <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">run_name</span>,
+            <span class="st">"Combined_PluriTest_Score"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
+            <span class="va">outDir</span>, <span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4180</span>, <span class="fl">2787</span>, <span class="fl">2859</span>, <span class="fl">2982</span>, <span class="fl">2968</span>, <span class="fl">2978</span>, <span class="fl">3019</span><span class="op">)</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-23-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
-</div>
-<div id="f-intra-cluster-correlations-stemness-markers" class="section level4">
-<h4 class="hasAnchor">
-<a href="#f-intra-cluster-correlations-stemness-markers" class="anchor"></a><strong>4f)</strong>: Intra-cluster Correlations &amp; Stemness Markers</h4>
+<p>#####<strong>(ii)</strong>: Intra-cluster Correlations &amp; Stemness Markers</p>
 <p>Now that we have some clusters of malignant cells from different patients, let’s look at the stemness correlations within each of them, to find genes highly correlated with stemness for each of these tumours. The most postively correlated genes will be used later as stemness markers, to assist identification of pCSCs.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cohort_index</span> <span class="op">&lt;-</span> <span class="fl">1</span>
@@ -1096,10 +1137,10 @@ tmpData &lt;- NULL</code></pre>
     <span class="va">tExprMatr_to_use</span> <span class="op">&lt;-</span> <span class="va">tTPM_mela_4558</span><span class="op">[</span><span class="va">mela_clusters_info</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,<span class="op">]</span>
     <span class="va">scores_to_use</span> <span class="op">&lt;-</span> <span class="va">mela_4558_additional_info</span><span class="op">$</span><span class="va">Combined_Pluritest_Score</span><span class="op">[</span><span class="va">mela_clusters_info</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">]</span>
 
-    <span class="va">mela_stemness_correlations_list</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mela_stemness_correlations_list</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_expression_scores_correlations.html">get_expression_scores_correlations</a></span><span class="op">(</span><span class="va">tExprMatr_to_use</span>,
-                                                                                    <span class="va">scores_to_use</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_stemness_correlations_list</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mela_stemness_correlations_list</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_clusters_info</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,
-                                                                                              <span class="st">"; Combined_Pluritest_Score"</span><span class="op">)</span>
+    <span class="va">mela_stemness_correlations_list</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mela_stemness_correlations_list</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span>
+        <span class="fu"><a href="../reference/get_expression_scores_correlations.html">get_expression_scores_correlations</a></span><span class="op">(</span><span class="va">tExprMatr_to_use</span>, <span class="va">scores_to_use</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_stemness_correlations_list</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mela_stemness_correlations_list</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_clusters_info</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"; Combined_Pluritest_Score"</span><span class="op">)</span>
 
     <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Combined_Pluritest_Score:\n"</span><span class="op">)</span><span class="op">)</span>
     <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"\nPositive correlations (top 10):\n"</span><span class="op">)</span><span class="op">)</span>
@@ -1238,7 +1279,8 @@ tmpData &lt;- NULL</code></pre>
 <span class="va">outDir</span> <span class="op">&lt;-</span> <span class="va">markersDir</span>
 
 <span class="fu"><a href="../reference/print_tSNE_coloured_by_gene.html">print_tSNE_coloured_by_gene</a></span><span class="op">(</span><span class="va">gene_names_to_print</span>, <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
-                            <span class="va">tTPM_mela_4558</span>, <span class="va">run_name</span>, <span class="va">outDir</span>, <span class="va">point_size</span> <span class="op">&lt;-</span> <span class="fl">1</span>, <span class="va">all_HUGO_abbreviations_and_fullnames</span>, <span class="va">dataDir</span><span class="op">)</span>
+                            <span class="va">tTPM_mela_4558</span>, <span class="va">run_name</span>, <span class="va">outDir</span>, <span class="va">point_size</span> <span class="op">&lt;-</span> <span class="fl">1</span>,
+                            <span class="va">all_HUGO_abbreviations_and_fullnames</span>, <span class="va">dataDir</span><span class="op">)</span>
 <span class="co">#&gt;   SMC4 [structural maintenance of chromosomes 4]</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-27-1.png" width="1152"></p>
 <pre><code>#&gt;   POLA1 [DNA polymerase alpha 1, catalytic subunit]</code></pre>
@@ -1259,28 +1301,31 @@ tmpData &lt;- NULL</code></pre>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-27-9.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 </div>
-<div id="g-manual-pcsc-group-selections" class="section level4">
+<div id="f-manual-pcsc-group-selections" class="section level4">
 <h4 class="hasAnchor">
-<a href="#g-manual-pcsc-group-selections" class="anchor"></a><strong>4g)</strong>: Manual pCSC Group Selections</h4>
-<p>In step 4f, some melanoma stemness markers were selected: CDK1, FANCI, NCAPG, SMC4, NUSAP1, MCM7, MCM6, POLA1 &amp; TYMS.</p>
+<a href="#f-manual-pcsc-group-selections" class="anchor"></a><strong>4f)</strong>: Manual pCSC Group Selections</h4>
+<p>In step 4e, some melanoma stemness markers were selected: CDK1, FANCI, NCAPG, SMC4, NUSAP1, MCM7, MCM6, POLA1 &amp; TYMS.</p>
 <p>We’ve seen that stemness and transcription increase along gradients within the malignant clusters; and these lead to regions with high transcription and high predicted stemness.</p>
 <p>Cluster 4 has elevated expression of many of these stemness markers towards one side. When looking closely at this area, the highest expression of many of these genes occurs approximately within two contiguous groups of cells near to each other. In the t-SNE I generated, these are in the location: Y1 &gt;38 and &lt;40; Y2 &gt;6.7 and &lt;8. However, there’s one extra cell in this box, which is not part of the two groups, so I don’t want to select it with the others. This extra cell is located within: Y1 &gt;38 and &lt;38.5; Y2 &gt;6.7 and &lt;7.</p>
 <p>So, to select pCSC group 4:</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">outDir</span> <span class="op">&lt;-</span> <span class="va">pCSCsDir</span>
 
-<span class="va">pCSCs_box1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_tSNE_box_positions.html">select_tSNE_box_positions</a></span><span class="op">(</span>tSNE_info <span class="op">=</span> <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
-                                        Y1_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">38</span>,<span class="fl">40</span><span class="op">)</span>, Y2_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6.8</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="co"># seed 50</span>
-<span class="va">pCSCs_box2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_tSNE_box_positions.html">select_tSNE_box_positions</a></span><span class="op">(</span>tSNE_info <span class="op">=</span> <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
-                                        Y1_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">38</span>,<span class="fl">38.5</span><span class="op">)</span>, Y2_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6.8</span>,<span class="fl">7</span><span class="op">)</span><span class="op">)</span>
+<span class="va">pCSCs_box1</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/select_tSNE_box_positions.html">select_tSNE_box_positions</a></span><span class="op">(</span>tSNE_info <span class="op">=</span> <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
+                              Y1_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">38</span>,<span class="fl">40</span><span class="op">)</span>, Y2_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6.8</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="co"># seed 50</span>
+<span class="va">pCSCs_box2</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="../reference/select_tSNE_box_positions.html">select_tSNE_box_positions</a></span><span class="op">(</span>tSNE_info <span class="op">=</span> <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>,
+                              Y1_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">38</span>,<span class="fl">38.5</span><span class="op">)</span>, Y2_borders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6.8</span>,<span class="fl">7</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/plot_scores_with_grid.html">plot_scores_with_grid</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">runName</span> <span class="op">&lt;-</span> <span class="st">"tSNE_070"</span>,
-                      <span class="va">scoresName</span> <span class="op">&lt;-</span> <span class="st">"Total_transcription"</span>, <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
+<span class="fu"><a href="../reference/plot_scores_with_grid.html">plot_scores_with_grid</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>,
+                      <span class="va">runName</span> <span class="op">&lt;-</span> <span class="st">"tSNE_070"</span>, <span class="va">scoresName</span> <span class="op">&lt;-</span> <span class="st">"Total_transcription"</span>,
+                      <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
                       <span class="va">outDir</span>, <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="va">pCSCs_box1</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-28-1.png" width="1152"></p>
 <pre><code><a href="../reference/plot_scores_with_grid.html">#&gt; NULL
-plot_scores_with_grid(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2", "tSNE_070",
-                      "Total_transcription", names(mela_tSNE_list_with_annotations)[cohort_index],
+plot_scores_with_grid(mela_tSNE_list_with_annotations[[cohort_index]][[perpl_index]], "Y1", "Y2",
+                      "tSNE_070", "Total_transcription", names(mela_tSNE_list_with_annotations)[cohort_index],
                       outDir, NULL, pCSCs_box2, highestOnTop &lt;- TRUE)</a></code></pre>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-28-2.png" width="1152"></p>
 <pre><code><a href="https://rdrr.io/r/base/which.html">#&gt; NULL
@@ -1308,13 +1353,16 @@ pCSCs_group_4 &lt;- pCSCs_box1[-(which(pCSCs_box1 %in% pCSCs_box2))]</a></code><
 <span class="va">cohort_index</span> <span class="op">&lt;-</span> <span class="fl">1</span>
 <span class="va">perpl_index</span> <span class="op">&lt;-</span> <span class="fl">1</span>
 
-<span class="va">mela_pCSC_groups_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>,
-                                <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">6</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">8</span><span class="op">]</span><span class="op">]</span>,
-                                <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">9</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">10</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="va">mela_pCSC_groups_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>,
+                                <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">6</span><span class="op">]</span><span class="op">]</span>,
+                                <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">8</span><span class="op">]</span><span class="op">]</span>, <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">9</span><span class="op">]</span><span class="op">]</span>,
+                                <span class="va">mela_pCSC_groups</span><span class="op">[[</span><span class="fl">10</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">runName</span> <span class="op">&lt;-</span> <span class="st">"tSNE_070"</span>,
-            <span class="va">scoresName</span> <span class="op">&lt;-</span> <span class="st">"Total_transcription"</span>, <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
-            <span class="va">outDir</span>, <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="va">mela_pCSC_groups_positions</span>, <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>,
+            <span class="va">runName</span> <span class="op">&lt;-</span> <span class="st">"tSNE_070"</span>, <span class="va">scoresName</span> <span class="op">&lt;-</span> <span class="st">"Total_transcription"</span>,
+            <span class="va">datasetName</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="va">cohort_index</span><span class="op">]</span>,
+            <span class="va">outDir</span>, <span class="va">labelPositions</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>, <span class="va">colourPositions</span> <span class="op">&lt;-</span> <span class="va">mela_pCSC_groups_positions</span>,
+            <span class="va">highestOnTop</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-29-1.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
 <hr>
@@ -1329,8 +1377,10 @@ pCSCs_group_4 &lt;- pCSCs_box1[-(which(pCSCs_box1 %in% pCSCs_box2))]</a></code><
 <code class="sourceCode R"><span class="co">#head(all_HUGO_groups_mordered)</span>
 <span class="va">mela_transcript_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">tTPM_mela_4558</span><span class="op">)</span>
 
-<span class="co"># Create a list of HUGO gene groups, with each group containing the position of each group member in the gene expression matrix columns.</span>
-<span class="va">mela_all_HUGO_groups_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_gene_positions_to_HUGO_gene_groups.html">map_gene_positions_to_HUGO_gene_groups</a></span><span class="op">(</span><span class="va">mela_transcript_names</span>, <span class="va">all_HUGO_groups_mordered</span><span class="op">)</span>
+<span class="co"># Create a list of HUGO gene groups, with each group containing the position of each group member in the</span>
+<span class="co"># gene expression matrix columns.</span>
+<span class="va">mela_all_HUGO_groups_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_gene_positions_to_HUGO_gene_groups.html">map_gene_positions_to_HUGO_gene_groups</a></span><span class="op">(</span><span class="va">mela_transcript_names</span>,
+                                                                         <span class="va">all_HUGO_groups_mordered</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">mela_all_HUGO_groups_positions</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">saveDir</span>, <span class="st">"mela_all_HUGO_group_positions.RData"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#load(paste0(saveDir, "mela_all_HUGO_group_positions.RData"))</span>
 
@@ -1360,21 +1410,29 @@ pCSCs_group_4 &lt;- pCSCs_box1[-(which(pCSCs_box1 %in% pCSCs_box2))]</a></code><
 
 <span class="co"># Positions for each patient's malignant tumour cells</span>
 <span class="va">mela_sample_59_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_59_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_59_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 7 source</span>
+    <span class="va">mela_sample_59_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_59_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 7 source</span>
 <span class="va">mela_sample_71_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_71_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_71_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 6 source</span>
+    <span class="va">mela_sample_71_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_71_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 6 source</span>
 <span class="va">mela_sample_78_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_78_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_78_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 4 source</span>
+    <span class="va">mela_sample_78_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_78_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 4 source</span>
 <span class="va">mela_sample_80_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_80_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_80_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 3 source</span>
+    <span class="va">mela_sample_80_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_80_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 3 source</span>
 <span class="va">mela_sample_81_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_81_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_81_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 2 source</span>
+    <span class="va">mela_sample_81_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_81_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 2 source</span>
 <span class="va">mela_sample_82_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_82_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_82_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 1 source</span>
+    <span class="va">mela_sample_82_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_82_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 1 source</span>
 <span class="va">mela_sample_88_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_88_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_88_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 5 source</span>
+    <span class="va">mela_sample_88_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_88_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 5 source</span>
 <span class="va">mela_sample_89_positions_tumour_only_4558</span> <span class="op">&lt;-</span>
-    <span class="va">mela_sample_89_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_89_positions_4558</span> <span class="op">%in%</span> <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 8 source</span></code></pre></div>
+    <span class="va">mela_sample_89_positions_4558</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mela_sample_89_positions_4558</span> <span class="op">%in%</span>
+                                        <span class="va">mela_4558_all_malignant_positions</span><span class="op">)</span><span class="op">]</span> <span class="co"># Cluster 8 source</span></code></pre></div>
 <p>To generate the preferential expression plots, set some parameters for the run:</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mela_pCSC_groups_to_run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
@@ -1399,9 +1457,10 @@ pCSCs_group_4 &lt;- pCSCs_box1[-(which(pCSCs_box1 %in% pCSCs_box2))]</a></code><
 
 <span class="va">tissue_type</span>                                  <span class="op">&lt;&lt;-</span> <span class="st">"melanoma"</span>
 <span class="va">outDir</span>                                       <span class="op">&lt;-</span> <span class="va">prefExprDir</span>
-<span class="va">no_ribo</span>                                      <span class="op">&lt;-</span> <span class="cn">TRUE</span>  <span class="co"># set to TRUE to remove ribosomal transcripts from some of the</span>
-                                                      <span class="co"># expression bar charts</span>
-<span class="va">separate_row_for_high_expression_transcripts</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span> <span class="co"># set to TRUE to print highest expression bars on a seperate row</span></code></pre></div>
+<span class="va">no_ribo</span>                                      <span class="op">&lt;-</span> <span class="cn">TRUE</span>  <span class="co"># set to TRUE to remove ribosomal transcripts from</span>
+                                                      <span class="co"># some of the expression bar charts</span>
+<span class="va">separate_row_for_high_expression_transcripts</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span> <span class="co"># set to TRUE to print highest expression bars on a</span>
+                                                      <span class="co"># seperate row</span></code></pre></div>
 <p>We’ll analyse two of the pCSC groups here for brevity, but uncomment the following code if you’d like to look at the others.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#mela_pCSC_groups_info_list_tmp &lt;- list()</span>
@@ -1470,7 +1529,8 @@ pCSCs_group_4 &lt;- pCSCs_box1[-(which(pCSCs_box1 %in% pCSCs_box2))]</a></code><
 <span class="co">#mela_pCSC_groups_info_list_tmp &lt;- list()</span>
 <span class="co">#mela_pCSC_groups_info_list_tmp[[1]] &lt;- 'mela_pCSC_group_10'</span>
 <span class="co">#mela_pCSC_groups_info_list_tmp[[2]] &lt;- mela_pCSC_groups[[10]]</span>
-<span class="co">#mela_pCSC_groups_info_list_tmp[[3]] &lt;- 'Samples 84 (14 cells), 60 (6 cells), 65 (2 cells), 80 (20 cells), &amp; 94 (1 cell)'</span>
+<span class="co">#mela_pCSC_groups_info_list_tmp[[3]] &lt;-</span>
+<span class="co">#    'Samples 84 (14 cells), 60 (6 cells), 65 (2 cells), 80 (20 cells), &amp; 94 (1 cell)'</span>
 <span class="co">#mela_pCSC_groups_info_list_tmp[[4]] &lt;- ''</span>
 <span class="co">#names(mela_pCSC_groups_info_list_tmp) &lt;- c('pCSC group name', 'pCSC group positions', 'Source patient name',</span>
 <span class="co">#                                           'Source patient tumour positions')</span>
@@ -1478,7 +1538,8 @@ pCSCs_group_4 &lt;- pCSCs_box1[-(which(pCSCs_box1 %in% pCSCs_box2))]</a></code><
 <p><strong>We can now print the preferential expression plots.</strong></p>
 <p>(If the images generated look small when viewing them in the web pages, you could try opening each of them in a new tab e.g. by using a right mouse click.)</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mela_all_results_ranks_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Preferential expression ranked results will be stored in here for further analysis</span>
+<code class="sourceCode R"><span class="va">mela_all_results_ranks_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Preferential expression ranked results will be stored in here for</span>
+                                      <span class="co"># further analysis</span>
 
 <span class="va">mela_4558_tumour_only_positions</span> <span class="op">&lt;-</span> <span class="va">mela_4558_all_malignant_positions</span>
 
@@ -1553,13 +1614,14 @@ save(mela_all_results_ranks_list, file = paste0(saveDir, "mela_all_results_ranks
     <span class="va">this_sample_name</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mela_tSNE_list_with_annotations</span><span class="op">)</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span>
     <span class="va">this_tSNE_results_with_annotations</span> <span class="op">&lt;-</span>
         <span class="va">mela_tSNE_list_with_annotations</span><span class="op">[[</span><span class="va">cohort_index</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">perpl_index</span><span class="op">]</span><span class="op">]</span> <span class="co"># taking first from perplexity list</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">this_tSNE_results_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="op">(</span><span class="va">this_pCSC_group_pos</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">this_pCSC_group_pos</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">this_tSNE_results_with_annotations</span><span class="op">)</span><span class="op">[</span><span class="op">(</span><span class="va">this_pCSC_group_pos</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">this_pCSC_group_pos</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
     <span class="fu"><a href="../reference/plot_scores.html">plot_scores</a></span><span class="op">(</span><span class="va">this_tSNE_results_with_annotations</span>, <span class="st">"Y1"</span>, <span class="st">"Y2"</span>, <span class="va">this_pCSC_group_name</span>, <span class="st">"Total_transcription"</span>,
                 <span class="va">this_sample_name</span>, <span class="va">tSNEsDir</span>, <span class="va">this_pCSC_group_pos</span><span class="op">)</span>
     
     <span class="va">outFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tSNEsDir</span>, <span class="va">this_pCSC_group_name</span>, <span class="st">'-Total_transcription_Y1vsY2.tif'</span><span class="op">)</span> 
-    <span class="va">renamed_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tSNEsDir</span>, <span class="va">this_pCSC_group_name</span>, <span class="st">"-Total_transcription_Y1vsY2-"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">this_pCSC_group_pos</span><span class="op">)</span>,
-                           <span class="st">"_cells-labelled.tif"</span><span class="op">)</span>
+    <span class="va">renamed_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tSNEsDir</span>, <span class="va">this_pCSC_group_name</span>, <span class="st">"-Total_transcription_Y1vsY2-"</span>,
+                           <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">this_pCSC_group_pos</span><span class="op">)</span>, <span class="st">"_cells-labelled.tif"</span><span class="op">)</span>
     <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.rename</a></span><span class="op">(</span><span class="va">outFile</span>, <span class="va">renamed_file</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-36-1.png" width="1152"><img src="tutorial_2_files/figure-html/unnamed-chunk-36-2.png" width="1152"></p>
@@ -1904,7 +1966,7 @@ save(mela_all_results_ranks_list, file = paste0(saveDir, "mela_all_results_ranks
 <pre><code>#&gt;   VCX [variable charge X-linked]</code></pre>
 <p><img src="tutorial_2_files/figure-html/unnamed-chunk-38-4.png" width="1152"></p>
 <pre><code>#&gt; NULL</code></pre>
-<p>This is the end of CSCPlots tutorial 2.</p>
+<p>This is the end of cscplots tutorial 2.</p>
 <p><strong>Now try <a href="tutorial_3.html">tutorial 3</a></strong>, which looks at CSCs from NSCLC, and studies their preferential expression. This includes generating Cells Per Million values for the scRNA-Seq matrix to assist preferential expression analysis.</p>
 <hr>
 </div>

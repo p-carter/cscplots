@@ -1,23 +1,23 @@
-title: CSCPlots
-url: https://github.com/p-carter/CSC-Plots
+title: cscplots
+url: https://github.com/p-carter/cscplots
 template:
   params:
     bootswatch: cerulean
 reference:
-- title: "CSCPlots"
+- title: "cscplots"
   desc: >
     Functions for identifying and analysing cancer stem cells from scRNA-Seq
-- title: "CSCPlots - t-SNE Functions"
+- title: "cscplots - t-SNE Functions"
   desc: Functions for running t-SNEs on cancer scRNA-Seq
 - contents: 
   - run_all_tSNEs
   - run_tSNE
-- title: "CSCPlots - Predictor Functions"
+- title: "cscplots - Predictor Functions"
   desc: Functions for running cell type predictors on cancer scRNA-Seq
 - contents:
   - run_ML_stemness_predictors
   - run_ML_cellType_predictors
-- title: "CSCPlots - Plot Functions"
+- title: "cscplots - Plot Functions"
   desc: Functions for printing t-SNEs & PCAs of cancer scRNA-Seq
 - contents: 
   - plot_scores
@@ -26,7 +26,7 @@ reference:
   - plot_categories_with_grid
   - print_tSNE_coloured_by_gene
   - plot_field_with_thresholds
-- title: "CSCPlots - Expression Matrix Conversions"
+- title: "cscplots - Expression Matrix Conversions"
   desc: >
     Functions for converting the values in an expression matrix containing 
     cancer scRNA-Seq
@@ -34,7 +34,7 @@ reference:
   - count_fractions_transcriptwise
   - count_fractions_per_base_transcriptwise
   - tpm_samplewise
-- title: "CSCPlots - Preferential Expression Functions"
+- title: "cscplots - Preferential Expression Functions"
   desc: >
     Functions for printing preferential expression in cell subsets
     in cancer scRNA-Seq
@@ -44,7 +44,7 @@ reference:
   - printBarchartSingleTranscriptNoStacking
   - stackedBarchartsForSingleTranscripts
   - stackedFamilyExpressionBarchartSingleBars
-- title: "CSCPlots - Misc. Functions"
+- title: "cscplots - Misc. Functions"
   desc: Additional miscellaneous function/s
 - contents: 
   - add_scores_to_tSNE_results
